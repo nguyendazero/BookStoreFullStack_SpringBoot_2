@@ -7,33 +7,27 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "author")
-public class Author {
+@Table(name = "like_entity")
+public class Like {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private int id;
 	
-	@Column(name = "full_name")
-	private String fullName;
-	
-	@Column(name = "home_town")
-	private String homeTown;
-	
-	@Column(name = "yearOfBirth")
-	private int yearOfBirth;
-	
-	@Column(name = "story")
-	private String story;
-	
-	@OneToMany(mappedBy = "author")
-    private List<Book> books;
+	@ManyToOne
+	@JoinColumn(name = "user_id")
+	private User user;
+
+	@ManyToOne
+	@JoinColumn(name = "book_id")
+	private Book book;
 	
 }
