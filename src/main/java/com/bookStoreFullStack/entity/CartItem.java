@@ -16,18 +16,18 @@ import lombok.Data;
 @Entity
 @Table(name = "cart_item")
 public class CartItem {
-
-	@EmbeddedId
-	private CartItemId id;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private int id;
 	
 	@ManyToOne
-	@MapsId("cartId")
-	@JoinColumn(name = "cart_id")
-	private Cart cart;
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
 	
 	@ManyToOne
-	@MapsId("bookId")
-	@JoinColumn(name = "book_id")
+    @JoinColumn(name = "book_id")
 	private Book book;
 	
 	@Column(name = "quantity")
