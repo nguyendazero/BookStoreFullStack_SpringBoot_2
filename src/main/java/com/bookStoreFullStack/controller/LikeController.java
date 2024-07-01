@@ -1,5 +1,10 @@
 package com.bookStoreFullStack.controller;
 
-public class LikeController {
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.bookStoreFullStack.service.LikeService;
+
+public class LikeController {
+	@Autowired
+	private LikeService likeService;
 }
