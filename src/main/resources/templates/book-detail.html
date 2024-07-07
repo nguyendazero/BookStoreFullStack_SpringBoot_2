@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="author" content="Untree.co">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link th:href="@{/favicon.png}" rel="shortcut icon">
 
   <meta name="description" content="" />
@@ -14,22 +16,298 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link th:href="@{/css/tiny-slider.css}" rel="stylesheet">
   <link th:href="@{/css/style.css}" rel="stylesheet">
-  <title>Furni Free Bootstrap 5 Template for Furniture and Interior Design Websites by Untree.co </title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+  
+  <link rel="stylesheet" th:href="@{/css/book-filter.css}" />
+  <!--- google font link-->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <!-- Fontawesome Link for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <title>Harry Potter - Book Detail Page</title>
 </head>
-<body>
+<body style="background-color: white;">
   <!-- Start Header/Navigation -->
   <div th:replace="partials/header :: headerFragment"></div>
   <!-- End Header/Navigation -->
+  <div class="breadcrumb-container">
+    <ul class="breadcrumb">
+      <li><a th:href="@{/home}">Home</a></li>
+      <li><a th:href="@{/book-filter}" style="color: #6c5dd4">Books</a></li>
+      <li><a th:text="${book.name}"></a></li>
+    </ul>
+  </div>
+ 	
+  <section class="book-overview">
+    <div class="img">
+      <img th:src="@{${book.image}}" alt="Harry Potter Book Cover" />
+    </div>
+    <div class="book-content">
+      <h4 th:text="${book.name}"></h4>
+      <div class="meta">
+        <div class="review">
+          <div class="rating">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <span>5.0</span>
+          </div>
+          <div class="comment-like">
+            <small>
+		        <img th:src="@{/images/comment.png}" alt="Comments" />
+		        <span th:text="${book.comments.size()}"></span>Reviews
+		    </small>
+			<small>
+		        <img th:src="@{/images/like.png}" alt="Likes" />
+		        <span th:text="${book.likes.size()}"></span>Likes
+		    </small>
+          </div>
+        </div>
+        <div class="social-btn">
+          <a href=""><i class="fa-brands fa-facebook-f"></i>Facebook</a>
+          <a href=""><i class="fa-brands fa-twitter"></i>Twitter</a>
+          <a href=""><i class="fa-brands fa-whatsapp"></i>Whatsapp</a>
+          <a href=""><i class="fa-regular fa-envelope"></i>Email</a>
+        </div>
+      </div>
+      <p th:text="${book.description}"></p>
 
-  <!-- Start Hero Section -->
+      <div class="footer">
+        <div class="author-detail">
+          <div class="author">
+            <small>Written by</small>
+            <strong>J.K. Rowling</strong>
+          </div>
+          <div class="publisher">
+            <small>Publisher</small>
+            <strong>Printarea Studios</strong>
+          </div>
+          <div class="year">
+            <small>Year</small>
+            <strong>2019</strong>
+          </div>
+        </div>
+        <div class="badge">
+          <span><i class="fa-solid fa-bolt-lightning"></i>free shipping</span>
+          <span><i class="fa-solid fa-shield"></i>in stocks</span>
+        </div>
+      </div>
+      <div class="book-price">
+        <div class="price">
+          <strong th:text="${book.price}"></strong>đ
+          <strike th:text="${book.price * 1.2}">$24.00</strike>
+          <span>16.67% off</span>
+        </div>
+        <div class="input-group">
+          <div class="offer-bottom">
+            <a href="/user/addCart/12345" class="cartbtn">
+              <i class="fa-solid fa-cart-shopping"></i>Add to cart
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <section class="book-info">
+    <div class="detail-customer">
+      <div class="tabbtns">
+        <button class="tablink" data-btn="detail">Details Product</button>
+        <button class="tablink" data-btn="customer">Customer Reviews</button>
+      </div>
+      <div class="book-detail tabcontent" id="detail">
+        <div class="detail-line">
+          <strong>Book Title</strong><span th:text="${book.name}"></span>
+        </div>
+        <div class="detail-line">
+          <strong>Author</strong><span>J.K. Rowling</span>
+        </div>
+        <div class="detail-line">
+          <strong>ISBN</strong><span>121341381648(ISBN13: 121341381648)</span>
+        </div>
+        <div class="detail-line">
+          <strong>Edition Language</strong><span>English</span>
+        </div>
+        <div class="detail-line">
+          <strong>Book Format</strong><span>Paperback, 450 Pages</span>
+        </div>
+        <div class="detail-line">
+          <strong>Date Published</strong><span>August 10th 2019</span>
+        </div>
+        <div class="detail-line">
+          <strong>Publisher</strong><span>Webpress Inc.</span>
+        </div>
+        <div class="detail-line tag-line">
+          <strong>Tags</strong>
+          <div class="tags">
+            <span>Drama</span>
+            <span>Adventure</span>
+            <span>Survival</span>
+            <span>Biography</span>
+            <span>Bestseller</span>
+          </div>
+        </div>
+      </div>
+      <div class="customer-review tabcontent" id="customer">
+        <div class="rating">
+          <div class="rating-info">
+            <h5>Rating Information</h5>
+          </div>
+          <div class="star">
+            <small><span>5.0</span>out of 5</small>
+            <div class="stars">
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+              <i class="fa-solid fa-star"></i>
+            </div>
+          </div>
+        </div>
 
-  <!-- End Hero Section -->
+        <h2 style="color: #3b5d50 !important;">Comment:</h2>
+        <form method="post" action="/rating/12345" style="display: flex; align-items: center;">
+		  <input style="width: 1000px; height: 80px; margin-right: 40px; font-size: 20px;" type="text" id="content" name="content" placeholder="Write your comment...">
+		  
+		  <div id="star-rating" style="font-size: 40px; margin-right: 40px; ">
+			<h5 style="color: coral;">Đánh giá sao:</h5>
+		    <span class="star" data-value="1">★</span>
+		    <span class="star" data-value="2">★</span>
+		    <span class="star" data-value="3">★</span>
+		    <span class="star" data-value="4">★</span>
+		    <span class="star" data-value="5">★</span>
+		  </div>
+		  
+		  <input type="hidden" id="stars" name="stars" value="0">
+		  
+		  <input class="btn btn-primary" type="submit" value="Send Rating">
+		</form>
 
+        <strong>Showing 10 of 10 reviews</strong>
 
+        <div class="reviewer-container " style="display: inline-block; width: 100%;">
+		<div class="row">
+		  <div class="review col-9" style="display: inline-block; vertical-align: top; height: 110px;" >
+		    <div class="img-detail">
+		      <img th:src="@{/images/man1.png}" alt="">
+		      <div class="name">
+		        <h5>Reviewer Name</h5>
+		        <small>01/01/2022</small>
+		      </div>
+		    </div>
+		    <div class="review-footer">
+		      <p>Great book!</p>
+		      <div class="rating-star">
+		        <i class="fa-solid fa-star"></i>
+		        <i class="fa-solid fa-star"></i>
+		        <i class="fa-solid fa-star"></i>
+		        <i class="fa-solid fa-star"></i>
+		        <i class="fa-solid fa-star"></i>
+		        <span>5.0</span>
+		      </div>
+		    </div>
+		  </div>
+		  <div class="col-3">
+			  <form method="post" action="/rating/12345/67890">
+			    <button onclick="return confirm('Are you sure?')" type="submit" style=" height: 45px; width: 100%; background-color: red;
+			    ">Delete</button>
+			  </form>
+			  <form method="get" action="/rating/edit/12345/67890" >
+			    <button type="submit" style=" height: 45px; width: 100%; margin-top: 20px; background-color:dodgerblue">Edit</button>
+			  </form>
+			</div>
+			</div>
+		</div>
+
+      </div>
+    </div>
+  </section>
+  
+  <section class="service" style="margin-bottom: 200px;">
+    <div class="service-container">
+      <div class="service-card">
+        <div class="icon">
+          <i class="fa-solid fa-bolt-lightning"></i>
+        </div>
+        <div class="service-content">
+          <h5>Quick Delivery</h5>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, exercitationem.</p>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="icon">
+          <i class="fa-solid fa-shield"></i>
+        </div>
+        <div class="service-content">
+          <h5>Secure Payment</h5>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, exercitationem.</p>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="icon">
+          <i class="fa-solid fa-thumbs-up"></i>
+        </div>
+        <div class="service-content">
+          <h5>Best Quality</h5>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, exercitationem.</p>
+        </div>
+      </div>
+      <div class="service-card">
+        <div class="icon">
+          <i class="fa-solid fa-star"></i>
+        </div>
+        <div class="service-content">
+          <h5>Return Guarantee</h5>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, exercitationem.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Start Footer Section -->
   <div th:replace="partials/footer :: footerFragment"></div>
   <!-- End Footer Section -->
+  <script>
+	  
+	//đánh giá sao
+	document.addEventListener("DOMContentLoaded", function() {
+	  const stars = document.querySelectorAll(".star");
+	
+	  stars.forEach(star => {
+	    star.addEventListener("click", function() {
+	      const value = this.getAttribute("data-value");
+	      document.getElementById("stars").value = value;
+	
+	      // Highlight selected stars
+	      stars.forEach(s => {
+	        s.style.color = s.getAttribute("data-value") <= value ? "#ffc107" : "black";
+	      });
+	    });
+	  });
+	});  
+	  
+    const tabbtn = document.querySelectorAll(".tablink");
+    for (let i = 0; i < tabbtn.length; i++) {
+      tabbtn[i].addEventListener('click', () => {
+        let tabName = tabbtn[i].dataset.btn;
+        let tabContent = document.getElementById(tabName);
+        let AllTabContent = document.querySelectorAll(".tabcontent");
+        let tabbtns = document.querySelectorAll(".tablink");
+        for (let j = 0; j < AllTabContent.length; j++) {
+          AllTabContent[j].style.display = "none";
+        }
+        tabContent.style.display = "block";
+      })
+    }
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script th:src="@{/js/repeat-js.js}"></script>
+  <script th:src="@{/js/increment-decrement.js}"></script>
 
   <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
   <script th:src="@{/js/tiny-slider.js}"></script>

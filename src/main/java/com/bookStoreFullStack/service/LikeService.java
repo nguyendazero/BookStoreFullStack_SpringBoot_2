@@ -2,6 +2,7 @@ package com.bookStoreFullStack.service;
 
 import java.util.List;
 
+import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.Like;
 
 public interface LikeService {
@@ -10,4 +11,5 @@ public interface LikeService {
 	Like saveLike(Like Like);
 	
 	void deleteLike(int id);
+
 }

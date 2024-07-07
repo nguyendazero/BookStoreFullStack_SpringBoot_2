@@ -12,6 +12,7 @@ import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.Category;
 import com.bookStoreFullStack.service.BookService;
 import com.bookStoreFullStack.service.CategoryService;
+import com.bookStoreFullStack.service.LikeService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -23,6 +24,8 @@ public class BookController {
 	private CategoryService categpryService;
 	@Autowired
 	private HttpSession session;
+	@Autowired
+    private LikeService likeService;
 	
 	@GetMapping("/book-filter")
 	public String bookFilter(Model model) {
@@ -40,7 +43,6 @@ public class BookController {
 		List<Book> books = bookService.getAllBooks();
 		model.addAttribute("books", books);
 		model.addAttribute("book", book);
-		
 		
 		return "book-detail";
 	}

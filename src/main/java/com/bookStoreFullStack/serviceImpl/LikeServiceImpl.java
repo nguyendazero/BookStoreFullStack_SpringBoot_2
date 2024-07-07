@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.Like;
 import com.bookStoreFullStack.repository.LikeRepository;
 import com.bookStoreFullStack.service.LikeService;
