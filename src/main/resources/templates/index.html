@@ -66,7 +66,7 @@
 
 					<!-- Start Column 2 -->
 					<div th:each="book, iterStat : ${books}" class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0" th:if="${iterStat.index < 3}">
-					    <a class="product-item" th:href="@{/cart.html}">
+					    <a class="product-item" th:href="@{/book/{id}(id=${book.id})}">
 					        <img th:src="@{${book.image}}" class="img-fluid product-thumbnail" style="height: 400px;">
 					        <h3 class="product-title" th:text="${book.name}" style="display: inline-block; width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></h3>
 					        <strong class="product-price" th:text="${book.price}" style="display: block; font-size: 1.2em; font-weight: bold; color: #ff6600;"></strong>
@@ -179,46 +179,18 @@
 		<div class="popular-product">
 			<div class="container">
 				<div class="row">
-
-					<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
-						<div class="product-item-sm d-flex">
-							<div class="thumbnail">
-								<img src="images/product-1.png" alt="Image" class="img-fluid">
-							</div>
-							<div class="pt-3">
-								<h3>Nordic Chair</h3>
-								<p>Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio </p>
-								<p><a href="#">Read More</a></p>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
-						<div class="product-item-sm d-flex">
-							<div class="thumbnail">
-								<img src="images/product-2.png" alt="Image" class="img-fluid">
-							</div>
-							<div class="pt-3">
-								<h3>Kruzo Aero Chair</h3>
-								<p>Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio </p>
-								<p><a href="#">Read More</a></p>
-							</div>
-						</div>
-					</div>
-
-					<div class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
-						<div class="product-item-sm d-flex">
-							<div class="thumbnail">
-								<img src="images/product-3.png" alt="Image" class="img-fluid">
-							</div>
-							<div class="pt-3">
-								<h3>Ergonomic Chair</h3>
-								<p>Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio </p>
-								<p><a href="#">Read More</a></p>
-							</div>
-						</div>
-					</div>
-
+					<div th:each="book : ${booksReadMore}" class="col-12 col-md-6 col-lg-4 mb-4 mb-lg-0">
+			            <div class="product-item-sm d-flex">
+			                <div class="thumbnail">
+			                    <img th:src="@{${book.image}}" alt="Image" class="img-fluid" style="height: 190px;">
+			                </div>
+			                <div class="pt-3">
+			                    <h3 th:text="${book.name}">Book Title</h3>
+			                    <p th:text="${book.author.fullName}">Book Description</p>
+			                    <p><a th:href="@{/book/{id}(id=${book.id})}">Read More</a></p>
+			                </div>
+			            </div>
+			        </div>
 				</div>
 			</div>
 		</div>
@@ -379,7 +351,7 @@
 
 		<!-- Start Footer Section -->
 		<div th:replace="partials/footer :: footerFragment"></div>
-		<!-- End Footer Section -->	
+		<!-- End Footer Section -->	z
 
 
 		<script src="js/bootstrap.bundle.min.js"></script>

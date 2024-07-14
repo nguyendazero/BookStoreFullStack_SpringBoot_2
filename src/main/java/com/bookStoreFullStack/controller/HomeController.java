@@ -28,9 +28,11 @@ public class HomeController {
 	public String home(Model model) {
 		List<Book> books = bookService.getAllBooks();
 		List<Category> categories = categpryService.getAllCategories();
+		List<Book> booksReadMore = bookService.getBooksReadMore();
 		
 		model.addAttribute("books", books);
 		model.addAttribute("categories", categories);
+		model.addAttribute("booksReadMore", booksReadMore);
 		return "index";
 	}
 }

@@ -1,8 +1,10 @@
 package com.bookStoreFullStack.serviceImpl;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.bookStoreFullStack.entity.Book;
@@ -54,4 +56,10 @@ public class BookServiceImpl implements BookService{
 	public void deleteBook(int id) {
 		bookRepository.deleteById(id);
 	}
+
+	@Override
+	public List<Book> getBooksReadMore() {
+		return bookRepository.findByStatus("read more");
+	}
+
 }

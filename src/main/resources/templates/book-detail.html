@@ -80,7 +80,7 @@
         <div class="author-detail">
           <div class="author">
             <small>Written by</small>
-            <strong>J.K. Rowling</strong>
+            <strong th:text="${book.author.fullName}"></strong>
           </div>
           <div class="publisher">
             <small>Publisher</small>
@@ -124,7 +124,7 @@
           <strong>Book Title</strong><span th:text="${book.name}"></span>
         </div>
         <div class="detail-line">
-          <strong>Author</strong><span>J.K. Rowling</span>
+          <strong>Author</strong><span th:text="${book.author.fullName}"></span>
         </div>
         <div class="detail-line">
           <strong>ISBN</strong><span>121341381648(ISBN13: 121341381648)</span>

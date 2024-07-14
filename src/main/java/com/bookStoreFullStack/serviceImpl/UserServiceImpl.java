@@ -47,4 +47,9 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("User with id " + id + " does not exist");
         }
     }
+
+	@Override
+	public User getUserByUsernameAndPass(String userName, String password) {
+		return userRepository.findByUserNameAndPassword(userName, password);
+	}
 }

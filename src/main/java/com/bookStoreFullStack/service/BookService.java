@@ -1,6 +1,9 @@
 package com.bookStoreFullStack.service;
 
+import java.awt.print.Pageable;
 import java.util.List;
+
+import org.hibernate.query.Page;
 
 import com.bookStoreFullStack.entity.Book;
 
@@ -20,4 +23,7 @@ public interface BookService {
 	Book updateBook(Book Book);
 	
 	void deleteBook(int id);
+	
+	List<Book> getBooksReadMore();
+	
 }
