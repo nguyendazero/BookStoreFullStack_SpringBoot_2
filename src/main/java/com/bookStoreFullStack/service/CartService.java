@@ -6,7 +6,7 @@ import com.bookStoreFullStack.entity.Cart;
 public interface CartService {
 	Cart saveCart(Cart user);
 	
-	Cart getCartByUser(int id_user);
+	Cart getCartByIdUser(int id_user);
 	
 	Cart updateCart(Cart Cart);
 	

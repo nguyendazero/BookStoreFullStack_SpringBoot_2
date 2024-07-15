@@ -35,4 +35,24 @@ public class HomeController {
 		model.addAttribute("booksReadMore", booksReadMore);
 		return "index";
 	}
+	
+	@GetMapping("/about")
+	public String about(Model model) {
+		return "about";
+	}
+	
+	@GetMapping("/service")
+	public String service(Model model) {
+		return "services";
+	}
+	
+	@GetMapping("/blog")
+	public String blog(Model model) {
+		return "blog";
+	}
+	
+	@GetMapping("/contact")
+	public String contact(Model model) {
+		return "contact";
+	}
 }

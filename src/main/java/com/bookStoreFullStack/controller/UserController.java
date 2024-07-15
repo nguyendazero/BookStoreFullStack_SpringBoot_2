@@ -74,14 +74,14 @@ public class UserController {
             @RequestParam("telephone") String telephone, Model model) {
 		
 		if(!password.equalsIgnoreCase(repassword)) {
-			model.addAttribute("error", "mật khẩu nhập lại không khớp");
+			model.addAttribute("error", "Mật khẩu nhập lại không khớp!");
 			return "register";
 		}
 		List<User> users = userService.getAllUsers();
 		boolean tonTai = false;
 		for (User user : users) {
 			if(username.equalsIgnoreCase(user.getUserName())) {
-				model.addAttribute("error", "tên đăng nhập đã tồn tại");
+				model.addAttribute("error", "Tên đăng nhập đã tồn tại!");
 				tonTai = true;
 				return "register";
 			}
@@ -103,7 +103,7 @@ public class UserController {
 			Cart cart = new Cart();
 	        cart.setUser(newUser);
 	        cartService.saveCart(cart);
-			model.addAttribute("error", "đã đăng ký thành công, hãy đăng nhập");
+			model.addAttribute("error", "Đã đăng ký thành công, hãy đăng nhập!");
 		}
 		return "login";
 	}
