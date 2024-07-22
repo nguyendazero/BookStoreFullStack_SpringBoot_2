@@ -5,15 +5,24 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bookStoreFullStack.entity.Cart;
 import com.bookStoreFullStack.entity.CartItem;
+import com.bookStoreFullStack.entity.User;
 import com.bookStoreFullStack.repository.CartItemRepository;
 import com.bookStoreFullStack.service.CartItemService;
+import com.bookStoreFullStack.service.CartService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class CartItemServiceImpl implements CartItemService {
 
     @Autowired
     private CartItemRepository cartItemRepository;
+    @Autowired
+	private HttpSession session;
+    @Autowired
+    private CartService cartService;
 
     @Override
     public List<CartItem> getAllCartItemByCartId(int id_cart) {
@@ -44,4 +53,39 @@ public class CartItemServiceImpl implements CartItemService {
         List<CartItem> cartItems = cartItemRepository.findByCartId(id_cart);
         cartItemRepository.deleteAll(cartItems);
     }
+
+	@Override
+	public void increaseQuantity(int cartItemId) {
+	    User userLogin = (User) session.getAttribute("userLogin");
+	    Cart cart = cartService.getCartByIdUser(userLogin.getId());
+	    if (cart != null) {
+	        List<CartItem> cartItems = getAllCartItemByCartId(cart.getId()); // Assuming getAllCartItemByCartId() returns a list of CartItem
+	        for (CartItem item : cartItems) {
+	            if (item.getId() == cartItemId) {
+	                item.setQuantity(item.getQuantity() + 1);
+	                cartItemRepository.save(item); // Assuming you have a repository to save the updated item
+	                break;
+	            }
+	        }
+	    } 
+	}
+
+	@Override
+	public void decreaseQuantity(int cartItemId) {
+		User userLogin = (User) session.getAttribute("userLogin");
+	    Cart cart = cartService.getCartByIdUser(userLogin.getId());
+	    if (cart != null) {
+	        List<CartItem> cartItems = getAllCartItemByCartId(cart.getId()); 
+	        for (CartItem item : cartItems) {
+	            if (item.getId() == cartItemId) {
+	            	if(item.getQuantity() >= 2) {
+	            		item.setQuantity(item.getQuantity() - 1);
+		                cartItemRepository.save(item); 
+		                break;
+	            	} 
+	            }
+	        }
+	    } 
+		
+	}
 }

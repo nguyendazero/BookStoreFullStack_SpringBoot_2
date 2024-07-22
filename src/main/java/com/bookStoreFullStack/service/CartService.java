@@ -1,6 +1,9 @@
 package com.bookStoreFullStack.service;
 
+import java.util.List;
+
 import com.bookStoreFullStack.entity.Cart;
+import com.bookStoreFullStack.entity.CartItem;
 
 
 public interface CartService {
@@ -11,4 +14,7 @@ public interface CartService {
 	Cart updateCart(Cart Cart);
 	
 	void deleteCart(int id);
+	
+
+
 }

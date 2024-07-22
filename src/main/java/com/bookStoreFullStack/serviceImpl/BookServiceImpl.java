@@ -62,4 +62,9 @@ public class BookServiceImpl implements BookService{
 		return bookRepository.findByStatus("read more");
 	}
 
+	@Override
+	public List<Book> getBooksOnSale() {
+		return bookRepository.findByStatus("on sale");
+	}
+
 }

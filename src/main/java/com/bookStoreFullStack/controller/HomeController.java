@@ -29,10 +29,12 @@ public class HomeController {
 		List<Book> books = bookService.getAllBooks();
 		List<Category> categories = categpryService.getAllCategories();
 		List<Book> booksReadMore = bookService.getBooksReadMore();
+		List<Book> booksOnSale = bookService.getBooksOnSale();
 		
 		model.addAttribute("books", books);
 		model.addAttribute("categories", categories);
 		model.addAttribute("booksReadMore", booksReadMore);
+		model.addAttribute("booksOnSale", booksOnSale);
 		return "index";
 	}
 	

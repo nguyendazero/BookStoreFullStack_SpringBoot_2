@@ -26,4 +26,6 @@ public interface BookService {
 	
 	List<Book> getBooksReadMore();
 	
+	List<Book> getBooksOnSale();
+	
 }
