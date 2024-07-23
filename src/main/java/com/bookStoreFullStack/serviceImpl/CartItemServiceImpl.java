@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.Cart;
 import com.bookStoreFullStack.entity.CartItem;
 import com.bookStoreFullStack.entity.User;
 import com.bookStoreFullStack.repository.CartItemRepository;
+import com.bookStoreFullStack.service.BookService;
 import com.bookStoreFullStack.service.CartItemService;
 import com.bookStoreFullStack.service.CartService;
 
@@ -23,6 +25,8 @@ public class CartItemServiceImpl implements CartItemService {
 	private HttpSession session;
     @Autowired
     private CartService cartService;
+    @Autowired
+    private BookService bookService;
 
     @Override
     public List<CartItem> getAllCartItemByCartId(int id_cart) {
@@ -45,7 +49,7 @@ public class CartItemServiceImpl implements CartItemService {
 
     @Override
     public CartItem getCartItemById(int itemId) {
-        return cartItemRepository.findById(itemId).get(itemId);
+        return cartItemRepository.findById(itemId);
     }
 
     @Override
@@ -63,7 +67,8 @@ public class CartItemServiceImpl implements CartItemService {
 	        for (CartItem item : cartItems) {
 	            if (item.getId() == cartItemId) {
 	                item.setQuantity(item.getQuantity() + 1);
-	                cartItemRepository.save(item); // Assuming you have a repository to save the updated item
+	                cartItemRepository.save(item);
+	                cartService.updateCart(cart);
 	                break;
 	            }
 	        }
@@ -81,6 +86,7 @@ public class CartItemServiceImpl implements CartItemService {
 	            	if(item.getQuantity() >= 2) {
 	            		item.setQuantity(item.getQuantity() - 1);
 		                cartItemRepository.save(item); 
+		                cartService.updateCart(cart);
 		                break;
 	            	} 
 	            }
@@ -88,4 +94,48 @@ public class CartItemServiceImpl implements CartItemService {
 	    } 
 		
 	}
+
+	@Override
+	public void addToCart(int bookId, User user) {
+	    Cart cart = cartService.getCartByIdUser(user.getId());
+
+	    Book bookAddCart = bookService.getBookById(bookId);
+	    boolean itemExists = false;
+
+	    for (CartItem item : cart.getItems()) {
+	        if (item.getBook().getId() == bookId) {
+	            item.setQuantity(item.getQuantity() + 1);
+	            cartItemRepository.save(item);
+	            itemExists = true;
+	            break;
+	        }
+	    }
+
+	    if (!itemExists) {
+	        CartItem newItem = new CartItem();
+	        newItem.setBook(bookAddCart);
+	        newItem.setQuantity(1);
+	        newItem.setCart(cart);
+	        
+	        cart.getItems().add(newItem);
+	        cartItemRepository.save(newItem);
+	    }
+
+	    cartService.updateCart(cart);
+	}
+
+	@Override
+	public void removeFromCart(int cartItemId, User user) {
+
+        Cart cart = cartService.getCartByIdUser(user.getId());
+        
+        CartItem itemToRemove = cartItemRepository.findById(cartItemId);
+
+        if (itemToRemove != null && cart.getItems().contains(itemToRemove)) {
+            cart.getItems().remove(itemToRemove);
+            
+            cartItemRepository.delete(itemToRemove);
+            cartService.updateCart(cart);
+        }
+    }
 }

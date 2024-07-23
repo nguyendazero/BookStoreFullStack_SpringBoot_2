@@ -25,8 +25,8 @@ public class CartController {
             return "redirect:/user/login-page";
         }
 
-        Cart cart = cartService.getCartByIdUser(userLogin.getId());
+        Cart cart = cartService.viewCart(userLogin);
         model.addAttribute("cart", cart);
-        return "cart"; 
+        return "cart";
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bookStoreFullStack.entity.Cart;
+import com.bookStoreFullStack.entity.User;
 import com.bookStoreFullStack.repository.CartRepository;
 import com.bookStoreFullStack.service.CartService;
 
@@ -24,12 +25,9 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart updateCart(Cart cart) {
-        if (cartRepository.existsById(cart.getId())) {
-            return cartRepository.save(cart);
-        } else {
-            throw new IllegalArgumentException("Cart with id " + cart.getId() + " does not exist");
-        }
+    public void updateCart(Cart cart) {
+    	cart.calculateTotal();
+        cartRepository.save(cart);
     }
 
     @Override
@@ -39,5 +37,12 @@ public class CartServiceImpl implements CartService {
         } else {
             throw new IllegalArgumentException("Cart with id " + id + " does not exist");
         }
+    }
+
+	@Override
+	public Cart viewCart(User user) {
+        Cart cart = getCartByIdUser(user.getId());       
+        updateCart(cart);       
+        return cart;
     }
 }

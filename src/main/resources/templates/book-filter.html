@@ -59,9 +59,8 @@
 			                <h3 class="product-title" th:text="${book.name}" style="display: inline-block; width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></h3>
 			                <strong class="product-price" th:text="${book.price}" style="display: block; font-size: 1.2em; font-weight: bold; color: #ff6600;"></strong>
 
-			
-			                <span class="icon-cross">
-			                    <img src="images/cross.svg" class="img-fluid">
+			                <span class="icon-cross" th:href="@{/cart/addCart/{id}(id=${book.id})}">
+			                    <img  src="images/cross.svg" class="img-fluid">
 			                </span>
 			            </a>
 			        </div> 

@@ -2,6 +2,7 @@ package com.bookStoreFullStack.service;
 
 import java.util.List;
 
+import com.bookStoreFullStack.entity.Cart;
 import com.bookStoreFullStack.entity.Coupon;
 
 
@@ -16,4 +17,5 @@ public interface CouponService {
 	Coupon updateCoupon(Coupon Coupon);
 	
 	void deleteCoupon(int id);
+
 }
