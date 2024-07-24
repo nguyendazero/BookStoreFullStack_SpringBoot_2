@@ -17,6 +17,9 @@ public interface CartService {
 	void deleteCart(int id);
 	
 	Cart viewCart(User user);
+	
+	Double applyCoupon(User user, String couponCode);
+	
 
 
 }

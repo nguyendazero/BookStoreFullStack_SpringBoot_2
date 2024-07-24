@@ -34,10 +34,17 @@ public class Cart {
     private List<CartItem> items;
 	
 	private double total;
+	
+	
 
-    public void calculateTotal() {
+	public void calculateTotal() {
         total = items.stream()
                      .mapToDouble(item -> item.getBook().getPrice() * item.getQuantity())
                      .sum();
     }
+    
+	public Double applyCoupon(Coupon coupon) {
+		double discountedTotal  = total - (total * coupon.getDiscount() / 100);
+		return discountedTotal;
+	}
 }
