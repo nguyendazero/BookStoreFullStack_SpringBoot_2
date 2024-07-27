@@ -60,4 +60,9 @@ public class CartController {
 
 	    return "redirect:/cart";
 	}
+	
+	@GetMapping("/cart/checkout")
+	public String checkout(Model model) {
+		return "checkout";
+	}
 }

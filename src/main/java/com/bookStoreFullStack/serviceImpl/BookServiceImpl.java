@@ -1,10 +1,9 @@
 package com.bookStoreFullStack.serviceImpl;
 
-import java.awt.print.Pageable;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.bookStoreFullStack.entity.Book;
@@ -30,11 +29,6 @@ public class BookServiceImpl implements BookService{
 	@Override
 	public List<Book> getBooksByAuthor(int authorId) {
 	    return bookRepository.findByAuthorId(authorId);
-	}
-
-	@Override
-	public List<Book> getBookBySearchName(String keyword) {
-	    return bookRepository.findByNameContainingIgnoreCase(keyword);
 	}
 
 	@Override
@@ -66,5 +60,15 @@ public class BookServiceImpl implements BookService{
 	public List<Book> getBooksOnSale() {
 		return bookRepository.findByStatus("on sale");
 	}
+
+	@Override
+	public List<Book> searchBooks(String query) {
+        return bookRepository.findByNameContainingIgnoreCase(query);
+    }
+
+	@Override
+	public List<Book> searchBooksByPriceRange(Double minPrice, Double maxPrice) {
+        return bookRepository.findByPriceBetween(minPrice, maxPrice);
+    }
 
 }

@@ -1,9 +1,8 @@
 package com.bookStoreFullStack.service;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
-import org.hibernate.query.Page;
+
 
 import com.bookStoreFullStack.entity.Book;
 
@@ -13,8 +12,6 @@ public interface BookService {
 	List<Book> getBooksByCategory(int id);
 	
 	List<Book> getBooksByAuthor(int id);
-	
-	List<Book> getBookBySearchName(String key);
 	
 	Book saveBook(Book Book);
 	
@@ -27,5 +24,9 @@ public interface BookService {
 	List<Book> getBooksReadMore();
 	
 	List<Book> getBooksOnSale();
+	
+	List<Book> searchBooks(String query);
+	
+	List<Book> searchBooksByPriceRange(Double minPrice, Double maxPrice);
 	
 }

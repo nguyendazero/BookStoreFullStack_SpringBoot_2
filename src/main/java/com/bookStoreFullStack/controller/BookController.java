@@ -52,4 +52,43 @@ public class BookController {
 		
 		return "book-detail";
 	}
+	
+	@GetMapping("/book/search")
+    public String searchBooks(@RequestParam("query") String query, Model model) {
+        List<Book> books = bookService.searchBooks(query);
+        List<Category> categories = categoryService.getAllCategories();
+		
+        model.addAttribute("query", query);
+		model.addAttribute("categories", categories);
+        model.addAttribute("books", books);
+        return "book-filter"; 
+    }
+	
+	@GetMapping("/book/category/{id}")
+	public String showBooksByCate(@PathVariable("id") int id, Model model){
+		List<Book> books = bookService.getBooksByCategory(id);
+		List<Category> categories = categoryService.getAllCategories();
+		
+		model.addAttribute("categories", categories);
+		 model.addAttribute("books", books);
+		return "book-filter";
+	}
+	
+	 @GetMapping("/book/searchByPrice")
+	    public String showBooksByPriceRange(
+	            @RequestParam("minPrice") Double minPrice,
+	            @RequestParam("maxPrice") Double maxPrice,
+	            Model model) {
+	        
+	        List<Book> books = bookService.searchBooksByPriceRange(minPrice, maxPrice);
+	        List<Category> categories = categoryService.getAllCategories();
+			
+			model.addAttribute("categories", categories);
+	        model.addAttribute("books", books);
+	        model.addAttribute("minPrice", minPrice);
+	        model.addAttribute("maxPrice", maxPrice);
+
+	        return "book-filter";
+	    }
+	
 }

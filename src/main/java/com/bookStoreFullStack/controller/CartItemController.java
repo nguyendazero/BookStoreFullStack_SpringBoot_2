@@ -44,6 +44,9 @@ public class CartItemController {
     @PostMapping("/cart/addToCart/{id}")
     public String addToCart(@PathVariable("id") int id, HttpSession session) {
         User userLogin = (User) session.getAttribute("userLogin");
+        if(userLogin == null) {
+        	return "login";
+        }
         cartItemService.addToCart(id, userLogin);
         return "redirect:/cart";
     }
