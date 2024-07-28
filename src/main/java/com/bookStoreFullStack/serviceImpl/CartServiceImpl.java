@@ -10,6 +10,8 @@ import com.bookStoreFullStack.repository.CartRepository;
 import com.bookStoreFullStack.repository.CouponRepository;
 import com.bookStoreFullStack.service.CartService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -17,6 +19,8 @@ public class CartServiceImpl implements CartService {
     private CartRepository cartRepository;
     @Autowired
     private CouponRepository couponRepository;
+    @Autowired
+    private HttpSession session;
 
     @Override
     public Cart saveCart(Cart cart) {
@@ -58,9 +62,18 @@ public class CartServiceImpl implements CartService {
 
 	    if (coupon != null && !coupon.getExpiry().before(new java.util.Date())) {
 	        discountedTotal = cart.applyCoupon(coupon);
+	        session.setAttribute("couponId", coupon.getId());
 	    }
 	    return discountedTotal;
 	}
 
-
+	@Override
+	public void clearCartItems(User user) {
+	    Cart cart = getCartByIdUser(user.getId());
+	    if (cart != null) {
+	        cart.getItems().clear();
+	        cart.calculateTotal();
+	        cartRepository.save(cart);
+	    }
+	}
 }

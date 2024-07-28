@@ -1,9 +1,8 @@
 package com.bookStoreFullStack.service;
 
-import java.util.List;
+
 
 import com.bookStoreFullStack.entity.Cart;
-import com.bookStoreFullStack.entity.CartItem;
 import com.bookStoreFullStack.entity.User;
 
 
@@ -19,7 +18,6 @@ public interface CartService {
 	Cart viewCart(User user);
 	
 	Double applyCoupon(User user, String couponCode);
-	
 
-
+	public void clearCartItems(User user);
 }

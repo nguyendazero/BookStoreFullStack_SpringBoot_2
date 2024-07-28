@@ -3,6 +3,7 @@ package com.bookStoreFullStack.entity;
 import java.sql.Date;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,14 +29,20 @@ public class OrderEntity {
 	@JoinColumn(name = "user_id")
 	private User user;
 	
-	@Column(name = "total")
-	private double total;
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	private List<OrderDetail> orderDetails;
 	
 	@Column(name = "date")
 	private Date date;
 	
-	@OneToMany(mappedBy = "order")
-	private List<OrderDetail> orderDetails;
+	@Column(name = "total")
+	private double total;
+	
+	@Column(name = "payment_method")
+    private String paymentMethod;
+
+    @Column(name = "status")
+    private String status;
 	
 	@ManyToOne
     @JoinColumn(name = "coupon_id", nullable = true)
