@@ -108,4 +108,73 @@ public class UserController {
 		return "login";
 	}
 	
+	@GetMapping("/user/change-pass-form")
+	public String changePassPage(Model model) {
+		return "change-pass";
+	}
+	
+	@PostMapping("/user/change-password")
+	public String ChangePassword(@RequestParam("currentPassword") String currentPassword,
+							     @RequestParam("newPassword") String newPassword,
+							     @RequestParam("confirmPassword") String confirmPassword,
+							     Model model) {
+		String error = "";
+		User userLogin = (User) session.getAttribute("userLogin");
+		if(userLogin == null) {
+			return "redirect:/user/login-page";
+		}
+		if(!currentPassword.equalsIgnoreCase(userLogin.getPassword())) {
+			error += "Mật khẩu cũ không chính xác!";
+		}else {
+			if(!newPassword.equalsIgnoreCase(confirmPassword)) {
+				error += "Mật khẩu nhập lại không khớp!";
+			}else {
+				if(newPassword.equalsIgnoreCase(currentPassword)) {
+					error += "Mật khẩu mới không được trùng mật khẩu cũ!";
+				}else {
+					error += "Đổi mật khẩu thành công!";
+					userLogin.setPassword(newPassword);
+					userService.saveUser(userLogin);
+					return "success";
+				}
+			}
+		}
+		model.addAttribute("error", error);
+		return "change-pass";
+	}
+	
+	@GetMapping("/user/update-info-form")
+	public String updateInforForm(Model model) {
+		User userLogin = (User) session.getAttribute("userLogin");
+		if(userLogin == null) {
+			return "redirect:/user/login-page";
+		}
+		model.addAttribute("user", userLogin);
+		return "change-infor";
+	}
+	
+	@PostMapping("user/update")
+	public String updateUser(@RequestParam("fullName") String fullName,
+							 @RequestParam("gender") String gender,
+							 @RequestParam("telephone") String telephone,
+							 @RequestParam("address") String address,
+							 @RequestParam("dateOfBirth") Date dateOfBirth,
+							 @RequestParam("email") String email, Model model) {
+		User userLogin = (User) session.getAttribute("userLogin");
+		if(userLogin == null) {
+			return "redirect:/user/login-page";
+		}
+		
+		userLogin.setFullName(fullName);
+		userLogin.setGender(gender);
+		userLogin.setTelephone(telephone);
+		userLogin.setAddress(address);
+		userLogin.setEmail(email);
+		userLogin.setDateOfBirth(dateOfBirth);
+		
+		userService.saveUser(userLogin);
+		model.addAttribute("error", "Thay đổi thông tin thành công!");
+		model.addAttribute("user", userLogin);
+		return "success";
+	}
 }

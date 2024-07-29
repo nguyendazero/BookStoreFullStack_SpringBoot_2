@@ -86,15 +86,17 @@
 					                    </td>
 					                    <td th:text="${item.book.price}"></td>
 					                    <td>
-					                        <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px;">																                            <div class="input-group-prepend">
-											    <a class="btn btn-outline-black decrease" type="button" th:href="@{/cart-item/minus/{id} (id=${item.id})}">&minus;</a>
-											</div>
-											<input type="text" class="form-control text-center quantity-amount" th:value="${item.quantity}" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-											<div class="input-group-append">
-											    <a class="btn btn-outline-black increase" type="button" th:href="@{/cart-item/plus/{id} (id=${item.id})}">&plus;</a>
-											</div>
-					                        </div>
-					                    </td>
+										    <div class="input-group mb-3 d-flex align-items-center quantity-container" style="max-width: 120px;">
+										        <div class="input-group-prepend">
+										            <a class="btn btn-outline-black decrease" type="button" th:href="@{/cart-item/minus/{id} (id=${item.id})}">&minus;</a>
+										        </div>
+										        <input type="text" class="form-control text-center quantity-amount" th:value="${item.quantity}" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+										        <div class="input-group-append">
+										            <a class="btn btn-outline-black increase" type="button" th:href="@{/cart-item/plus/{id} (id=${item.id})}">&plus;</a>
+										        </div>
+										    </div>
+										</td>
+
 					                    <td th:text="${item.book.price * item.quantity}"></td>
 					                    <td><a onclick="return confirm('Are you sure?')" th:href="@{/cart-item/removeToCart/{id} (id=${item.id})}" class="btn btn-black btn-sm">X</a></td>
 					                </tr>
