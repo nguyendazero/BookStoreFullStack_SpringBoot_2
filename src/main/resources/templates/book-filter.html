@@ -67,6 +67,9 @@
 								        Phân loại sách
 								    </button>
 								    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+								        <a class="dropdown-item" th:href="@{/book/status/status(name=${'runout'})}" name="runout" id="runout">Hết hàng</a>
+								        <a class="dropdown-item" th:href="@{/book/status/status(name=${'discount'})}" name="discount" id="discount">Giảm giá</a>
+
 								        <a class="dropdown-item" th:each="category : ${categories}" th:href="@{/book/category/{id}(id=${category.id})}" th:text="${category.name}"></a>
 								    </div>
 								</div>
@@ -85,6 +88,7 @@
 					                </div>
 					            </div>
 					        </form>
+					       
 								                
 			            </div>
 			        </div>

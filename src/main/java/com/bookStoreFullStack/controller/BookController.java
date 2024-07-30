@@ -91,4 +91,13 @@ public class BookController {
 	        return "book-filter";
 	    }
 	
+	 @GetMapping("/book/status/status")
+	 public String showBookByStatus(@RequestParam(name = "name") String name, Model model) {
+	     List<Book> books = bookService.getBookStatus(name);
+	     List<Category> categories = categoryService.getAllCategories();
+			
+		 model.addAttribute("categories", categories);
+	     model.addAttribute("books", books);
+	     return "book-filter";
+	 }
 }

@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.Cart;
 import com.bookStoreFullStack.entity.CartItem;
 import com.bookStoreFullStack.entity.Coupon;
@@ -14,6 +15,7 @@ import com.bookStoreFullStack.entity.OrderDetail;
 import com.bookStoreFullStack.entity.OrderDetailId;
 import com.bookStoreFullStack.entity.OrderEntity;
 import com.bookStoreFullStack.entity.User;
+import com.bookStoreFullStack.repository.BookRepository;
 import com.bookStoreFullStack.repository.CouponRepository;
 import com.bookStoreFullStack.repository.OrderDetailRepository;
 import com.bookStoreFullStack.repository.OrderEntityRepository;
@@ -35,9 +37,7 @@ public class OrderEntityServiceImpl implements OrderEntityService {
     @Autowired
     private CartService cartService;
     @Autowired
-    private HttpSession session;
-    @Autowired
-    private CartItemService cartItemService;
+    private BookRepository bookRepository;
     
 
     @Override
@@ -107,6 +107,15 @@ public class OrderEntityServiceImpl implements OrderEntityService {
             orderDetail.setQuantity(cartItem.getQuantity());
             orderDetail.setPrice(cartItem.getBook().getPrice() * cartItem.getQuantity());
             orderDetails.add(orderDetail);
+            
+            //Update quantity của Book
+            Book book = cartItem.getBook();
+            int updatedQuantity = book.getQuantity() - cartItem.getQuantity();
+            book.setQuantity(updatedQuantity);
+            if(updatedQuantity == 0) {
+            	book.setStatus("runout");
+            }
+            bookRepository.save(book);
         }
         orderDetailRepository.saveAll(orderDetails);
 

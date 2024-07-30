@@ -59,20 +59,27 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
 	@Override
-	public void increaseQuantity(int cartItemId) {
+	public String increaseQuantity(int cartItemId) {
 	    User userLogin = (User) session.getAttribute("userLogin");
 	    Cart cart = cartService.getCartByIdUser(userLogin.getId());
+	    String error = "";
 	    if (cart != null) {
 	        List<CartItem> cartItems = getAllCartItemByCartId(cart.getId()); // Assuming getAllCartItemByCartId() returns a list of CartItem
 	        for (CartItem item : cartItems) {
 	            if (item.getId() == cartItemId) {
-	                item.setQuantity(item.getQuantity() + 1);
-	                cartItemRepository.save(item);
-	                cartService.updateCart(cart);
-	                break;
+	            	if(item.getQuantity() < item.getBook().getQuantity()) {
+	            		item.setQuantity(item.getQuantity() + 1);
+		                cartItemRepository.save(item);
+		                cartService.updateCart(cart);
+		                error = null;
+		                break;
+	            	}else {
+	            		error += "Không đủ số lượng sản phẩm trong kho!";
+	            	}               
 	            }
 	        }
 	    } 
+	    return error;
 	}
 
 	@Override

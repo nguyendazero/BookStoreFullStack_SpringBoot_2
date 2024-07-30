@@ -71,4 +71,9 @@ public class BookServiceImpl implements BookService{
         return bookRepository.findByPriceBetween(minPrice, maxPrice);
     }
 
+	@Override
+	public List<Book> getBookStatus(String status) {
+		return bookRepository.findByStatus(status);
+	}
+
 }

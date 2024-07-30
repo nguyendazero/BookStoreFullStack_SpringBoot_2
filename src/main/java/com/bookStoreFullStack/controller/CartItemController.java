@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.Cart;
@@ -30,8 +31,9 @@ public class CartItemController {
 	private HttpSession session;
 	
 	@GetMapping("/cart-item/plus/{id}")	
-    public String plusItem(@PathVariable("id") int cartItemId, Model model) {
-        cartItemService.increaseQuantity(cartItemId);
+    public String plusItem(@PathVariable("id") int cartItemId, RedirectAttributes redirectAttributes) {
+        String errorIfTrue = cartItemService.increaseQuantity(cartItemId);
+        redirectAttributes.addFlashAttribute("errorIfTrue", errorIfTrue);
         return "redirect:/cart";
     }
 

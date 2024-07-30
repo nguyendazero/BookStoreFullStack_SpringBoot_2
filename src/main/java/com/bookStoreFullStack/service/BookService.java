@@ -13,6 +13,8 @@ public interface BookService {
 	
 	List<Book> getBooksByAuthor(int id);
 	
+	List<Book> getBookStatus(String status);
+	
 	Book saveBook(Book Book);
 	
 	Book getBookById(int id);

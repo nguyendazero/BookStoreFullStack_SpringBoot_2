@@ -104,11 +104,17 @@
         </div>
         <div class="input-group">
           <div class="offer-bottom">
-            <form th:action="@{/cart/addToCart/{id}(id=${book.id})}" method="post">
-			    <button type="submit" class="cartbtn" style="background-color: #3b5d50; color: white; border: none; padding: 5px 10px; font-size: 16px; cursor: pointer; display: inline-flex; align-items: center; border-radius: 5px; transition: background-color 0.3s;">
-			        <i class="fa-solid fa-cart-shopping"></i> Add to cart
+            <div>
+			    <form th:if="${book.status != 'runout'}" th:action="@{/cart/addToCart/{id}(id=${book.id})}" method="post">
+			        <button type="submit" class="cartbtn" style="background-color: #3b5d50; color: white; border: none; padding: 5px 10px; font-size: 16px; cursor: pointer; display: inline-flex; align-items: center; border-radius: 5px; transition: background-color 0.3s;">
+			            <i class="fa-solid fa-cart-shopping"></i> Add to cart
+			        </button>
+			    </form>
+			    <button th:if="${book.status == 'runout'}" class="cartbtn" style="background-color: #999; color: white; border: none; padding: 5px 10px; font-size: 16px; display: inline-flex; align-items: center; border-radius: 5px; cursor: not-allowed;">
+			        Đã hết hàng
 			    </button>
-			</form>
+			</div>
+
           </div>
         </div>
       </div>

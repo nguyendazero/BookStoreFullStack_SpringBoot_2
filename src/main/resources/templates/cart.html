@@ -63,6 +63,9 @@
 					   </div>	
                    </div>
                    <div th:unless="${#lists.isEmpty(cart.items)}">
+					   <div  th:if="${errorIfTrue}" class="alert alert-danger">
+				        	<span th:text="${errorIfTrue}" ></span>
+				       </div>
 	                <form class="col-md-12" method="post">
 	                  <div class="site-blocks-table">
 					        <table class="table">

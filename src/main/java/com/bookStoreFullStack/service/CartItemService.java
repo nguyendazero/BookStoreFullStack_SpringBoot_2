@@ -22,7 +22,7 @@ public interface CartItemService {
 
 	void removeAllCartItemsByIdCart(int id_cart);
 	
-	void increaseQuantity(int cartItemId);
+	String increaseQuantity(int cartItemId);
 	
     void decreaseQuantity(int cartItemId);
 }
