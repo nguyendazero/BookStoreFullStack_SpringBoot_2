@@ -999,7 +999,6 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .book-info .customer-review .rating {
-    display: flex;
     align-items: center;
     justify-content: space-between;
     border: 1px solid #f0f0f0;

@@ -20,4 +20,5 @@ public interface OrderEntityService {
     
     OrderEntity createOrder(User user, List<CartItem> cartItems, String paymentMethod, Integer couponId);
     
+    boolean hasUserPurchasedBook(User user, int bookId);
 }

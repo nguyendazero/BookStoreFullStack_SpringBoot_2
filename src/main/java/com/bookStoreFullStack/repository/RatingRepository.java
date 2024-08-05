@@ -8,4 +8,5 @@ import com.bookStoreFullStack.entity.Rating;
 
 public interface RatingRepository extends JpaRepository<Rating, Integer>{
 	List<Rating> findByBookId(int bookId);
+	
 }

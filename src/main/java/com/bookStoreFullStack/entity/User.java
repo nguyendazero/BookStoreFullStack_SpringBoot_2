@@ -49,10 +49,8 @@ public class User {
 	private int role;
 	
 	@OneToMany(mappedBy = "user")
-    private List<Like> likes;
+    private List<LikeRating> likes;
 	
-	@OneToMany(mappedBy = "user")
-	private List<Comment> comments;
 	
 	@OneToMany(mappedBy = "user")
 	private List<Rating> ratings;

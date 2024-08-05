@@ -3,13 +3,18 @@ package com.bookStoreFullStack.service;
 import java.util.List;
 
 import com.bookStoreFullStack.entity.Book;
-import com.bookStoreFullStack.entity.Like;
+import com.bookStoreFullStack.entity.LikeRating;
+import com.bookStoreFullStack.entity.Rating;
+import com.bookStoreFullStack.entity.User;
 
 public interface LikeService {
-	List<Like> getLikesByBook(int bookId);
+	List<LikeRating> getLikesByBook(int bookId);
 	
-	Like saveLike(Like Like);
+	LikeRating saveLike(LikeRating Like);
 	
 	void deleteLike(int id);
 
+	List<LikeRating> findLikesByRatingId(int ratingId);
+	
+	LikeRating findLikeByUserAndRating(User user, Rating rating);
 }

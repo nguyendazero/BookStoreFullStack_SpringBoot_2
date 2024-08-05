@@ -1,7 +1,5 @@
 package com.bookStoreFullStack.entity;
 
-import java.util.List;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +13,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "like_entity")
-public class Like {
+public class LikeRating {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,5 +27,9 @@ public class Like {
 	@ManyToOne
 	@JoinColumn(name = "book_id")
 	private Book book;
+	
+	@ManyToOne
+	@JoinColumn(name = "rating_id")
+	private Rating rating; 
 	
 }

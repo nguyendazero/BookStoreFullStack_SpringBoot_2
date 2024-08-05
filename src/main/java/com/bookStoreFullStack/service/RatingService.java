@@ -14,4 +14,8 @@ public interface RatingService {
 	Rating updateRating(Rating Rating);
 	
 	void deleteRating(int id);
+	
+	List<Rating> getRatingsByBookId(int bookId);
+	 
+	public double calculateAverageStars(int bookId);
 }

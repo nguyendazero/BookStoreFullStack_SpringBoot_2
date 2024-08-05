@@ -25,6 +25,9 @@ public class Book {
 	@Column(name = "name")
 	private String name;
 	
+	@Column(name = "averageStars")
+	private double averageStars;
+	
 	@ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
@@ -49,11 +52,8 @@ public class Book {
     private Author author;
 	
 	@OneToMany(mappedBy = "book")
-    private List<Like> likes;
-	
-	@OneToMany(mappedBy = "book")
-    private List<Comment> comments;
-	
+    private List<LikeRating> likes;
+
 	@OneToMany(mappedBy = "book")
     private List<Rating> ratings;
 	

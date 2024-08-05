@@ -1,3 +1,4 @@
+
 package com.bookStoreFullStack.entity;
 
 import java.util.List;

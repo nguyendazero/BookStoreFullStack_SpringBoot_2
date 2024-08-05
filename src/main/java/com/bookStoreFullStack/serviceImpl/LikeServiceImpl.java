@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bookStoreFullStack.entity.Book;
-import com.bookStoreFullStack.entity.Like;
+import com.bookStoreFullStack.entity.LikeRating;
+import com.bookStoreFullStack.entity.Rating;
+import com.bookStoreFullStack.entity.User;
 import com.bookStoreFullStack.repository.LikeRepository;
 import com.bookStoreFullStack.service.LikeService;
 
@@ -17,12 +19,12 @@ public class LikeServiceImpl implements LikeService {
     private LikeRepository likeRepository;
 
     @Override
-    public List<Like> getLikesByBook(int bookId) {
+    public List<LikeRating> getLikesByBook(int bookId) {
         return likeRepository.findByBookId(bookId);
     }
 
     @Override
-    public Like saveLike(Like like) {
+    public LikeRating saveLike(LikeRating like) {
         return likeRepository.save(like);
     }
 
@@ -33,6 +35,16 @@ public class LikeServiceImpl implements LikeService {
         } else {
             throw new IllegalArgumentException("Like with id " + id + " does not exist");
         }
+    }
+    
+    @Override
+    public List<LikeRating> findLikesByRatingId(int ratingId) {
+        return likeRepository.findByRatingId(ratingId);
+    }
+    
+    @Override
+    public LikeRating findLikeByUserAndRating(User user, Rating rating) {
+        return likeRepository.findByUserAndRating(user, rating);
     }
 
 }

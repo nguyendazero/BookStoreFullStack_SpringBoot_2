@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bookStoreFullStack.entity.Rating;
 import com.bookStoreFullStack.repository.RatingRepository;
 import com.bookStoreFullStack.service.RatingService;
 
+@Transactional
 @Service
 public class RatingServiceImpl implements RatingService {
 
@@ -46,6 +48,21 @@ public class RatingServiceImpl implements RatingService {
         } else {
             throw new IllegalArgumentException("Rating with id " + id + " does not exist");
         }
+    }
+    
+    @Override
+    public List<Rating> getRatingsByBookId(int bookId) {
+        return ratingRepository.findByBookId(bookId);
+    }
+    
+    @Override
+    public double calculateAverageStars(int bookId) {
+        List<Rating> ratings = ratingRepository.findByBookId(bookId);
+        if (ratings.isEmpty()) {
+            return 0.0;
+        }
+        double totalStars = ratings.stream().mapToInt(Rating::getStars).sum();
+        return totalStars / ratings.size();
     }
 
 }

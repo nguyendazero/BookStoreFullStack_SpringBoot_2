@@ -123,5 +123,8 @@ public class OrderEntityServiceImpl implements OrderEntityService {
         return savedOrder;
     }
 
-
+	@Override
+    public boolean hasUserPurchasedBook(User user, int bookId) {
+        return orderDetailRepository.existsByOrder_UserAndBook_Id(user, bookId);
+    }
 }

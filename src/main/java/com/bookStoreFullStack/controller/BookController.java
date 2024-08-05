@@ -1,11 +1,11 @@
 package com.bookStoreFullStack.controller;
 
-import java.awt.print.Pageable;
+
 import java.util.List;
 
-import org.hibernate.query.Page;
+import java.text.DecimalFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.Category;
+import com.bookStoreFullStack.entity.LikeRating;
+import com.bookStoreFullStack.entity.Rating;
 import com.bookStoreFullStack.service.BookService;
 import com.bookStoreFullStack.service.CategoryService;
 import com.bookStoreFullStack.service.LikeService;
+import com.bookStoreFullStack.service.RatingService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -30,6 +33,8 @@ public class BookController {
 	private HttpSession session;
 	@Autowired
     private LikeService likeService;
+	@Autowired
+	private RatingService ratingService;
 	
 	@GetMapping("/book-filter")
 	public String bookFilter(Model model) {
@@ -47,6 +52,21 @@ public class BookController {
 	public String bookDetail(Model model, @PathVariable int id) {
 		Book book = bookService.getBookById(id);
 		List<Book> books = bookService.getAllBooks();
+		List<Rating> ratings = ratingService.getRatingsByBookId(id);
+		DecimalFormat df = new DecimalFormat("#.#");
+        String formattedStars = df.format(book.getAverageStars());
+        
+        for (Rating rating : book.getRatings()) {
+            List<LikeRating> likes = likeService.findLikesByRatingId(rating.getId());
+            rating.setLikes(likes);
+        }
+        
+        double averageStars = ratingService.calculateAverageStars(id);
+	    book.setAverageStars(averageStars);
+	    bookService.saveBook(book);
+		
+        model.addAttribute("formattedAverageStars", formattedStars);
+        model.addAttribute("ratings", ratings);
 		model.addAttribute("books", books);
 		model.addAttribute("book", book);
 		

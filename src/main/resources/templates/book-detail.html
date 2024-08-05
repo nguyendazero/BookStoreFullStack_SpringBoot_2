@@ -7,31 +7,32 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link th:href="@{/favicon.png}" rel="shortcut icon">
-
   <meta name="description" content="" />
   <meta name="keywords" content="bootstrap, bootstrap4" />
-
+  
   <!-- Bootstrap CSS -->
   <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <link th:href="@{/css/tiny-slider.css}" rel="stylesheet">
   <link th:href="@{/css/style.css}" rel="stylesheet">
   <link rel="stylesheet" th:href="@{/css/style.css}" />
-  
   <link rel="stylesheet" th:href="@{/css/book-filter.css}" />
-  <!--- google font link-->
+  
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <!-- Fontawesome Link for Icons -->
+  
+  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
+  
   <title>Harry Potter - Book Detail Page</title>
 </head>
 <body style="background-color: white;">
   <!-- Start Header/Navigation -->
   <div th:replace="partials/header :: headerFragment"></div>
   <!-- End Header/Navigation -->
+  
   <div class="breadcrumb-container">
     <ul class="breadcrumb">
       <li><a th:href="@{/home}">Home</a></li>
@@ -39,7 +40,7 @@
       <li><a th:text="${book.name}"></a></li>
     </ul>
   </div>
- 	
+  
   <section class="book-overview">
     <div class="img">
       <img th:src="@{${book.image}}" alt="Harry Potter Book Cover" />
@@ -48,23 +49,31 @@
       <h4 th:text="${book.name}"></h4>
       <div class="meta">
         <div class="review">
-          <div class="rating">
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <span>5.0</span>
-          </div>
+          <div class="rating" style="display: flex; align-items: center;">
+		    <!-- Hiển thị ngôi sao vàng nếu averageStars lớn hơn 0 -->
+		    <div th:if="${book.averageStars > 0}" style="display: flex; align-items: center;">
+		        <div th:each="i : ${#numbers.sequence(1, T(java.lang.Math).round(book.averageStars))}" style="margin-right: 2px;">
+		            <i class="fa-solid fa-star" style="color: #f39c12;"></i>
+		        </div>
+		    </div>
+		    <!-- Hiển thị ngôi sao xám -->
+		    <div th:if="${book.averageStars != 5}" style="display: flex; align-items: center;">
+		        <div th:each="i : ${#numbers.sequence(T(java.lang.Math).round(book.averageStars) + 1, 5)}" style="margin-right: 2px;">
+		            <i class="fa-solid fa-star" style="color: #ddd;"></i>
+		        </div>
+		    </div>
+		 	<span th:text="${formattedAverageStars}" style="margin-left: 8px;"></span>
+		</div>
+
           <div class="comment-like">
             <small>
-		        <img th:src="@{/images/comment.png}" alt="Comments" />
-		        <span th:text="${book.comments.size()}"></span>Reviews
-		    </small>
-			<small>
-		        <img th:src="@{/images/like.png}" alt="Likes" />
-		        <span th:text="${book.likes.size()}"></span>Likes
-		    </small>
+              <img th:src="@{/images/comment.png}" alt="Comments" />
+              <span th:text="${book.ratings.size()}"></span>Reviews
+            </small>
+            <small>
+              <img th:src="@{/images/like.png}" alt="Likes" />
+              <span th:text="${book.likes.size()}"></span>Likes
+            </small>
           </div>
         </div>
         <div class="social-btn">
@@ -105,16 +114,15 @@
         <div class="input-group">
           <div class="offer-bottom">
             <div>
-			    <form th:if="${book.status != 'runout'}" th:action="@{/cart/addToCart/{id}(id=${book.id})}" method="post">
-			        <button type="submit" class="cartbtn" style="background-color: #3b5d50; color: white; border: none; padding: 5px 10px; font-size: 16px; cursor: pointer; display: inline-flex; align-items: center; border-radius: 5px; transition: background-color 0.3s;">
-			            <i class="fa-solid fa-cart-shopping"></i> Add to cart
-			        </button>
-			    </form>
-			    <button th:if="${book.status == 'runout'}" class="cartbtn" style="background-color: #999; color: white; border: none; padding: 5px 10px; font-size: 16px; display: inline-flex; align-items: center; border-radius: 5px; cursor: not-allowed;">
-			        Đã hết hàng
-			    </button>
-			</div>
-
+              <form th:if="${book.status != 'runout'}" th:action="@{/cart/addToCart/{id}(id=${book.id})}" method="post">
+                <button type="submit" class="cartbtn" style="background-color: #3b5d50; color: white; border: none; padding: 5px 10px; font-size: 16px; cursor: pointer; display: inline-flex; align-items: center; border-radius: 5px; transition: background-color 0.3s;">
+                  <i class="fa-solid fa-cart-shopping"></i> Add to cart
+                </button>
+              </form>
+              <button th:if="${book.status == 'runout'}" class="cartbtn" style="background-color: #999; color: white; border: none; padding: 5px 10px; font-size: 16px; display: inline-flex; align-items: center; border-radius: 5px; cursor: not-allowed;">
+                Đã hết hàng
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -124,8 +132,8 @@
   <section class="book-info">
     <div class="detail-customer">
       <div class="tabbtns">
-        <button class="tablink" data-btn="detail">Details Product</button>
-        <button class="tablink" data-btn="customer">Customer Reviews</button>
+        <button class="tablink" data-tab="detail">Details Product</button>
+        <button class="tablink" data-tab="customer">Customer Reviews</button>
       </div>
       <div class="book-detail tabcontent" id="detail">
         <div class="detail-line">
@@ -165,160 +173,185 @@
           <div class="rating-info">
             <h5>Rating Information</h5>
           </div>
-          <div class="star">
-            <small><span>5.0</span>out of 5</small>
-            <div class="stars">
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-              <i class="fa-solid fa-star"></i>
-            </div>
-          </div>
-        </div>
+          <strong style="display: flex; align-items: center; justify-content: center; font-size: 20px;">
+		    <span th:text="${formattedAverageStars}" style="margin-right: 4px;"></span>
+		    <span>out of 5</span>
+		  </strong>
+          <div class="stars-container" style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;">
+		    <div class="stars" style="display: flex; align-items: center;">
+		        <!-- Hiển thị ngôi sao vàng nếu averageStars lớn hơn 0 -->
+		        <div th:if="${book.averageStars > 0}" style="display: flex; align-items: center;">
+		            <div th:each="i : ${#numbers.sequence(1, T(java.lang.Math).round(book.averageStars))}" style="margin-right: 2px;">
+		                <i class="fa-solid fa-star" style="color: #f39c12;"></i>
+		            </div>
+		        </div>
 
-        <h2 style="color: #3b5d50 !important;">Comment:</h2>
-        <form method="post" action="/rating/12345" style="display: flex; align-items: center;">
-		  <input style="width: 1000px; height: 80px; margin-right: 40px; font-size: 20px;" type="text" id="content" name="content" placeholder="Write your comment...">
-		  
-		  <div id="star-rating" style="font-size: 40px; margin-right: 40px; ">
-			<h5 style="color: coral;">Đánh giá sao:</h5>
-		    <span class="star" data-value="1">★</span>
-		    <span class="star" data-value="2">★</span>
-		    <span class="star" data-value="3">★</span>
-		    <span class="star" data-value="4">★</span>
-		    <span class="star" data-value="5">★</span>
-		  </div>
-		  
-		  <input type="hidden" id="stars" name="stars" value="0">
-		  
-		  <input class="btn btn-primary" type="submit" value="Send Rating">
-		</form>
-
-        <strong>Showing 10 of 10 reviews</strong>
-
-        <div class="reviewer-container " style="display: inline-block; width: 100%;">
-		<div class="row">
-		  <div class="review col-9" style="display: inline-block; vertical-align: top; height: 110px;" >
-		    <div class="img-detail">
-		      <img th:src="@{/images/man1.png}" alt="">
-		      <div class="name">
-		        <h5>Reviewer Name</h5>
-		        <small>01/01/2022</small>
-		      </div>
+		        <!-- Hiển thị ngôi sao xám -->
+		        <div th:if="${book.averageStars != 5}" style="display: flex; align-items: center;">
+		            <div th:each="i : ${#numbers.sequence(T(java.lang.Math).round(book.averageStars) + 1, 5)}" style="margin-right: 2px;">
+		                <i class="fa-solid fa-star" style="color: #ddd;"></i>
+		            </div>
+		        </div>
 		    </div>
-		    <div class="review-footer">
-		      <p>Great book!</p>
-		      <div class="rating-star">
-		        <i class="fa-solid fa-star"></i>
-		        <i class="fa-solid fa-star"></i>
-		        <i class="fa-solid fa-star"></i>
-		        <i class="fa-solid fa-star"></i>
-		        <i class="fa-solid fa-star"></i>
-		        <span>5.0</span>
-		      </div>
-		    </div>
-		  </div>
-		  <div class="col-3">
-			  <form method="post" action="/rating/12345/67890">
-			    <button onclick="return confirm('Are you sure?')" type="submit" style=" height: 45px; width: 100%; background-color: red;
-			    ">Delete</button>
-			  </form>
-			  <form method="get" action="/rating/edit/12345/67890" >
-			    <button type="submit" style=" height: 45px; width: 100%; margin-top: 20px; background-color:dodgerblue">Edit</button>
-			  </form>
-			</div>
-			</div>
 		</div>
 
-      </div>
-    </div>
-  </section>
-  
-  <section class="service" style="margin-bottom: 200px;">
-    <div class="service-container">
-      <div class="service-card">
-        <div class="icon">
-          <i class="fa-solid fa-bolt-lightning"></i>
         </div>
-        <div class="service-content">
-          <h5>Quick Delivery</h5>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, exercitationem.</p>
-        </div>
-      </div>
-      <div class="service-card">
-        <div class="icon">
-          <i class="fa-solid fa-shield"></i>
-        </div>
-        <div class="service-content">
-          <h5>Secure Payment</h5>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, exercitationem.</p>
-        </div>
-      </div>
-      <div class="service-card">
-        <div class="icon">
-          <i class="fa-solid fa-thumbs-up"></i>
-        </div>
-        <div class="service-content">
-          <h5>Best Quality</h5>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, exercitationem.</p>
-        </div>
-      </div>
-      <div class="service-card">
-        <div class="icon">
-          <i class="fa-solid fa-star"></i>
-        </div>
-        <div class="service-content">
-          <h5>Return Guarantee</h5>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id, exercitationem.</p>
-        </div>
+        
+        <h4 th:if="${error}" style="color: red;" th:text="${error}"></h4>
+        <h2 style="color: #a65c5c;" th:if="${message}" th:text="${message}"></h2>
+        
+        <form th:action="@{/rating/add/{id}(id=${book.id})}" method="post" class="review-form">
+          <input type="hidden" name="bookId" th:value="${book.id}" />
+          <div class="form-group">
+		  <div class="form-group" style="margin-bottom: 1rem;">
+		    <label for="rating" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">Your Rating</label>
+		    <div id="star-rating" class="star-rating" data-rating="0" style="display: flex; font-size: 1.5em; color: #d3d3d3; cursor: pointer;">
+		        <i class="fa-solid fa-star" data-value="1" style="margin: 0 2px; transition: color 0.3s; font-size: 30px;"></i>
+		        <i class="fa-solid fa-star" data-value="2" style="margin: 0 2px; transition: color 0.3s; font-size: 30px;"></i>
+		        <i class="fa-solid fa-star" data-value="3" style="margin: 0 2px; transition: color 0.3s; font-size: 30px;"></i>
+		        <i class="fa-solid fa-star" data-value="4" style="margin: 0 2px; transition: color 0.3s; font-size: 30px;"></i>
+		        <i class="fa-solid fa-star" data-value="5" style="margin: 0 2px; transition: color 0.3s; font-size: 30px;"></i>
+		    </div>
+		    <input type="hidden" id="rating" name="stars" value="0" required>
+		</div>
+		</div>
+          <div class="form-group">
+            <textarea id="content" name="content" class="form-control" rows="4" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary mt-2 mb-2">Submit Review</button>
+        </form>
+        
+        <div class="reviews" style="padding: 10px; background-color: #f9f9f9; border-radius: 10px; border: 1px solid #ddd;">
+		  <h3 style="margin-bottom: 20px; font-size: 24px; font-weight: bold; color: #333;">Customer Reviews</h3>
+		  <div class="review-item" th:each="review : ${book.ratings}" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px; background-color: #fff;">
+		    <div class="review-content">
+		      <div class="review-header" style="margin-bottom: 10px; justify-content: space-between;">
+		        <strong th:text="${review.user.fullName}" style="font-size: 16px; color: red; margin-right: 10px;"></strong>
+		        <span th:text="${review.date}" style="font-size: 14px; color: #888;"></span>
+		      </div>
+		      <div class="review-body">
+		        <div class="rating" style="margin-bottom: 10px;">
+		          <!-- Các ngôi sao đánh giá -->
+		          <i class="fa-solid fa-star" th:each="i : ${#numbers.sequence(1, review.stars)}"
+		             style="color: #f39c12; font-size: 20px; margin-right: 2px; display: inline-block;"></i>
+		        </div>
+		        <p th:text="${review.content}" style="font-size: 15px; color: #555;"></p>
+		      </div>
+		      <div class="review-actions" style="margin-top: 15px; display: flex; gap: 10px; align-items: center;">
+		        <!-- Hiển thị số lượng like -->
+		        <span th:text="${#lists.size(review.likes)}" 
+			      style="font-size: 16px; font-weight: bold; color: #007bff;">
+				</span>
+
+		        <!-- Nút Like -->
+		        <form th:action="@{/rating/addLike/{id}(id=${review.id})}" method="post" style="display: inline;">
+			        <button class="btn btn-primary btn-sm" style="border: none; background-color: #007bff; color: white; font-size: 14px; cursor: pointer; border-radius: 5px; padding: 5px 10px; transition: background-color 0.3s;">
+			          Like
+			        </button>
+			    </form>
+		        <!-- Nút Edit -->
+		        <button class="btn btn-warning btn-sm" style="border: none; background-color: #ffc107; color: white; font-size: 14px; cursor: pointer; border-radius: 5px; padding: 5px 10px; transition: background-color 0.3s;">
+		          Edit
+		        </button>
+		        <!-- Nút Delete -->
+		        <form th:action="@{/rating/delete/{id}(id=${review.id})}" method="post" style="display: inline;">
+		          <button type="submit" class="btn btn-danger btn-sm" style="border: none; background-color: #dc3545; color: white; font-size: 14px; cursor: pointer; border-radius: 5px; padding: 5px 10px; transition: background-color 0.3s;" onclick="return confirm('Are you sure you want to delete this review?');">
+		            Delete
+		          </button>
+		        </form>
+		      </div>
+		    </div>
+		  </div>
+		</div>
+
+
+
       </div>
     </div>
   </section>
 
-  <!-- Start Footer Section -->
-  <div th:replace="partials/footer :: footerFragment"></div>
-  <!-- End Footer Section -->
   <script>
-	  
-	//đánh giá sao
 	document.addEventListener("DOMContentLoaded", function() {
-	  const stars = document.querySelectorAll(".star");
+	  // Function to open a specific tab
+	  function openTab(tabName) {
+	    var i, tabcontent, tablinks;
+	    tabcontent = document.querySelectorAll(".tabcontent");
+	    tablinks = document.querySelectorAll(".tablink");
 	
-	  stars.forEach(star => {
-	    star.addEventListener("click", function() {
-	      const value = this.getAttribute("data-value");
-	      document.getElementById("stars").value = value;
+	    // Hide all tab contents and remove 'active' class from all tab links
+	    tabcontent.forEach(content => {
+	      content.style.display = "none";
+	    });
+	    tablinks.forEach(link => {
+	      link.classList.remove("active");
+	    });
 	
-	      // Highlight selected stars
-	      stars.forEach(s => {
-	        s.style.color = s.getAttribute("data-value") <= value ? "#ffc107" : "black";
-	      });
+	    // Show the specific tab content and add 'active' class to the clicked tab link
+	    document.getElementById(tabName).style.display = "block";
+	    document.querySelector(`.tablink[data-tab="${tabName}"]`).classList.add("active");
+	  }
+	
+	  // Initialize first tab as active
+	  openTab("detail");
+	
+	  // Add click event listeners to tab links
+	  document.querySelectorAll(".tablink").forEach(tab => {
+	    tab.addEventListener("click", function() {
+	      var tabName = this.getAttribute("data-tab");
+	      openTab(tabName);
 	    });
 	  });
-	});  
-	  
-    const tabbtn = document.querySelectorAll(".tablink");
-    for (let i = 0; i < tabbtn.length; i++) {
-      tabbtn[i].addEventListener('click', () => {
-        let tabName = tabbtn[i].dataset.btn;
-        let tabContent = document.getElementById(tabName);
-        let AllTabContent = document.querySelectorAll(".tabcontent");
-        let tabbtns = document.querySelectorAll(".tablink");
-        for (let j = 0; j < AllTabContent.length; j++) {
-          AllTabContent[j].style.display = "none";
-        }
-        tabContent.style.display = "block";
-      })
-    }
+	
+	  // Rating stars functionality
+	  const stars = document.querySelectorAll("#star-rating .fa-star");
+	  const ratingInput = document.getElementById("rating");
+	
+	  stars.forEach(star => {
+	    star.addEventListener("mouseover", function() {
+	      const value = parseInt(this.getAttribute("data-value"));
+	      updateStars(value, 'hover');
+	    });
+	
+	    star.addEventListener("mouseout", function() {
+	      const value = parseInt(ratingInput.value);
+	      updateStars(value, 'selected');
+	    });
+	
+	    star.addEventListener("click", function() {
+	      const value = parseInt(this.getAttribute("data-value"));
+	      ratingInput.value = value;
+	      updateStars(value, 'selected');
+	    });
+	  });
+	
+	  function updateStars(value, action) {
+	    stars.forEach(star => {
+	      const starValue = parseInt(star.getAttribute("data-value"));
+	      if (starValue <= value) {
+	        if (action === 'hover') {
+	          star.style.color = '#f7d106'; // Color when hovered
+	        } else {
+	          star.style.color = '#f7d106'; // Color when selected
+	        }
+	      } else {
+	        if (action === 'hover') {
+	          star.style.color = '#d3d3d3'; // Color when not hovered
+	        } else {
+	          star.style.color = '#d3d3d3'; // Color when not selected
+	        }
+	      }
+	    });
+	  }
+	});
   </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script th:src="@{/js/repeat-js.js}"></script>
-  <script th:src="@{/js/increment-decrement.js}"></script>
 
-  <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
-  <script th:src="@{/js/tiny-slider.js}"></script>
-  <script th:src="@{/js/custom.js}"></script>
+  <!-- Footer -->
+  <div th:replace="partials/footer :: footerFragment"></div>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script th:src="@{/js/script.js}"></script>
 </body>
 </html>
