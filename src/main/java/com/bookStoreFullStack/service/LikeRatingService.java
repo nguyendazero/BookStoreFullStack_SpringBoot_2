@@ -7,14 +7,11 @@ import com.bookStoreFullStack.entity.LikeRating;
 import com.bookStoreFullStack.entity.Rating;
 import com.bookStoreFullStack.entity.User;
 
-public interface LikeService {
+public interface LikeRatingService {
 	List<LikeRating> getLikesByBook(int bookId);
-	
-	LikeRating saveLike(LikeRating Like);
-	
-	void deleteLike(int id);
-
-	List<LikeRating> findLikesByRatingId(int ratingId);
-	
-	LikeRating findLikeByUserAndRating(User user, Rating rating);
+    LikeRating saveLike(LikeRating like);
+    void deleteLike(int id);
+    List<LikeRating> findLikesByRatingId(int ratingId);
+    LikeRating getLikeRatingByUserAndRating(User user, Rating rating);
+ 
 }

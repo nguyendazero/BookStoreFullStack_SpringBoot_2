@@ -127,4 +127,9 @@ public class OrderEntityServiceImpl implements OrderEntityService {
     public boolean hasUserPurchasedBook(User user, int bookId) {
         return orderDetailRepository.existsByOrder_UserAndBook_Id(user, bookId);
     }
+
+	@Override
+	public List<OrderEntity> getAllOrderEntity() {
+		return orderEntityRepository.findAll();
+	}
 }

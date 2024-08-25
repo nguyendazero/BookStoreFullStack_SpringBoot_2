@@ -10,6 +10,8 @@ import com.bookStoreFullStack.entity.User;
 public interface OrderEntityService {
     List<OrderEntity> getAllOrderEntityByUserId(int idUser);
     
+    List<OrderEntity> getAllOrderEntity();
+    
     OrderEntity saveOrderEntity(OrderEntity orderEntity);
     
     OrderEntity getOrderEntityById(int id);

@@ -4,8 +4,6 @@ import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,7 +14,7 @@ import com.bookStoreFullStack.entity.LikeRating;
 import com.bookStoreFullStack.entity.Rating;
 import com.bookStoreFullStack.entity.User;
 import com.bookStoreFullStack.service.BookService;
-import com.bookStoreFullStack.service.LikeService;
+import com.bookStoreFullStack.service.LikeRatingService;
 import com.bookStoreFullStack.service.OrderEntityService;
 import com.bookStoreFullStack.service.RatingService;
 
@@ -33,7 +31,7 @@ public class RatingController {
 	@Autowired
 	private OrderEntityService orderEntityService;
 	@Autowired
-	private LikeService likeService;
+	private LikeRatingService likeService;
 	
 	@PostMapping("/rating/add/{id}")
 	public String addRating(@RequestParam("bookId") int bookId, 
@@ -71,8 +69,6 @@ public class RatingController {
 
 	    return "redirect:/book/" + bookId;
 	}
-
-
 	
 	@PostMapping("/rating/delete/{id}")
 	public String deleteRating(@PathVariable("id") int reviewId, RedirectAttributes redirectAttributes) {
@@ -94,30 +90,30 @@ public class RatingController {
 	    return "redirect:/book/" + bookId;
 	}
 	
-	@PostMapping("/rating/addLike/{id}")
-	public String likeRating(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
-	    User userLogin = (User) session.getAttribute("userLogin");
-	    if (userLogin == null) {
-	        return "redirect:/user/login-page";
-	    }
+	@PostMapping("/rating/addDelLike/{id}")
+    public String likeRating(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+        User userLogin = (User) session.getAttribute("userLogin");
+        if (userLogin == null) {
+            return "redirect:/user/login-page";
+        }
 
-	    Rating rating = ratingService.getRatingById(id);
-	    int bookId = rating.getBook().getId();
+        Rating rating = ratingService.getRatingById(id);
+        int bookId = rating.getBook().getId();
+      
+        LikeRating existingLike = likeService.getLikeRatingByUserAndRating(userLogin, rating);
+        if (existingLike != null) {
+            likeService.deleteLike(existingLike.getId());
+            return "redirect:/book/" + bookId;
+        }
 
-	    LikeRating existingLike = likeService.findLikeByUserAndRating(userLogin, rating);
-	    if (existingLike != null) {
-	    	redirectAttributes.addFlashAttribute("error", "Bạn đã like rating này!");
-	        return "redirect:/book/" + bookId;
-	    }
+        LikeRating newLike = new LikeRating();
+        newLike.setBook(rating.getBook());
+        newLike.setRating(rating);
+        newLike.setUser(userLogin);
+        likeService.saveLike(newLike);
 
-	    LikeRating newLike = new LikeRating();
-	    newLike.setBook(rating.getBook());
-	    newLike.setRating(rating);
-	    newLike.setUser(userLogin);
-	    likeService.saveLike(newLike);
-
-	    return "redirect:/book/" + bookId;
-	}
-
-
+        return "redirect:/book/" + bookId;
+    }
+	
+	
 }

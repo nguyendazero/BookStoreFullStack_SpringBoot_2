@@ -16,9 +16,10 @@ import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.Category;
 import com.bookStoreFullStack.entity.LikeRating;
 import com.bookStoreFullStack.entity.Rating;
+import com.bookStoreFullStack.entity.User;
 import com.bookStoreFullStack.service.BookService;
 import com.bookStoreFullStack.service.CategoryService;
-import com.bookStoreFullStack.service.LikeService;
+import com.bookStoreFullStack.service.LikeRatingService;
 import com.bookStoreFullStack.service.RatingService;
 
 import jakarta.servlet.http.HttpSession;
@@ -32,7 +33,7 @@ public class BookController {
 	@Autowired
 	private HttpSession session;
 	@Autowired
-    private LikeService likeService;
+    private LikeRatingService likeService;
 	@Autowired
 	private RatingService ratingService;
 	
@@ -50,6 +51,8 @@ public class BookController {
 	
 	@GetMapping("/book/{id}")
 	public String bookDetail(Model model, @PathVariable int id) {
+		User userLogin = (User) session.getAttribute("userLogin");
+		
 		Book book = bookService.getBookById(id);
 		List<Book> books = bookService.getAllBooks();
 		List<Rating> ratings = ratingService.getRatingsByBookId(id);
@@ -59,7 +62,13 @@ public class BookController {
         for (Rating rating : book.getRatings()) {
             List<LikeRating> likes = likeService.findLikesByRatingId(rating.getId());
             rating.setLikes(likes);
+            LikeRating existingLike = likeService.getLikeRatingByUserAndRating(userLogin, rating);
+            if(existingLike != null) {
+            	model.addAttribute("true", existingLike != null);
+            }
         }
+        
+        
         
         double averageStars = ratingService.calculateAverageStars(id);
 	    book.setAverageStars(averageStars);
@@ -120,4 +129,27 @@ public class BookController {
 	     model.addAttribute("books", books);
 	     return "book-filter";
 	 }
+	 
+	 
+	 /*****************************ADMIN*********************************/
+	 
+	 @GetMapping("/admin/book")
+	 public String BookManager(Model model) {
+		 List<Book> books = bookService.getAllBooks();
+			List<Category> categories = categoryService.getAllCategories();
+			
+			model.addAttribute("books", books);
+			model.addAttribute("categories", categories);
+		 return "admin/book";
+	 }
+	 
+	 @GetMapping("/admin/book/add")
+	 public String addBook(Model model) {
+		 return "admin/add-book";
+	 }
+	 
+	 
+	 
+	 
+	 
 }

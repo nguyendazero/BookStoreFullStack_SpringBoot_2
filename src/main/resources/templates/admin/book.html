@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Management</title>
+    <link th:href="@{/css/style3.css}" rel="stylesheet">
+    <script th:src="@{/js/book-admin.js}" defer></script>
+</head>
+<body>
+    <!-- Sidebar -->
+	<div th:replace="partials/sidebar"></div>
+    
+    <div class="container">
+        <h1 class="text-center my-4">Book Management</h1>
+
+        <!-- Add New Book Button -->
+        <div class="mb-4 text-right">
+            <a th:href="@{/admin/book/add}" class="btn btn-success">Add New Book</a>
+        </div>
+
+        <!-- Book List -->
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Author</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="book : ${books}">
+                    <td>
+                        <img th:src="@{${book.image}}" alt="Book Image" class="img-thumbnail" style="width: 100px;">
+                    </td>
+                    <td th:text="${book.name}"></td>
+                    <td th:text="${book.category.name}"></td>
+                    <td th:text="${book.author.fullName}"></td>
+                    <td th:text="${book.price} + ' $'"></td>
+                    <td th:text="${book.status}"></td>
+                    <td>
+                        <a th:href="@{/admin/books/edit/{id}(id=${book.id})}" class="btn btn-primary btn-sm">Edit</a>
+                        <a th:href="@{/admin/books/delete/{id}(id=${book.id})}" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

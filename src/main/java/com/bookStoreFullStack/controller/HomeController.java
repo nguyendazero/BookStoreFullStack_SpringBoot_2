@@ -9,8 +9,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.Category;
+import com.bookStoreFullStack.entity.OrderEntity;
+import com.bookStoreFullStack.entity.User;
 import com.bookStoreFullStack.service.BookService;
 import com.bookStoreFullStack.service.CategoryService;
+import com.bookStoreFullStack.service.OrderEntityService;
+import com.bookStoreFullStack.service.UserService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -23,6 +27,10 @@ public class HomeController {
 	private CategoryService categpryService;
 	@Autowired
 	private HttpSession session;
+	@Autowired
+	private OrderEntityService orderEntityService;
+	@Autowired
+	private UserService userService;
 	
 	@GetMapping("/home")
 	public String home(Model model) {
@@ -36,6 +44,29 @@ public class HomeController {
 		model.addAttribute("booksReadMore", booksReadMore);
 		model.addAttribute("booksOnSale", booksOnSale);
 		return "index";
+	}
+	
+	@GetMapping("/home-admin")
+	public String homeAdmin(Model model) {
+		List<Book> books = bookService.getAllBooks();
+		List<Category> categories = categpryService.getAllCategories();
+		List<OrderEntity> orders = orderEntityService.getAllOrderEntity();
+		List<User> users = userService.getAllUsers();
+		int totalBooks = books.size();
+		int totalOrders = orders.size();
+		int totalUsers = users.size();
+		int totalCategories = categories.size();
+		
+		model.addAttribute("books", books);
+		model.addAttribute("categories", categories);
+		model.addAttribute("orders", orders);
+		model.addAttribute("users", users);
+		model.addAttribute("totalBooks", totalBooks);
+		model.addAttribute("totalOrders", totalOrders);
+		model.addAttribute("totalUsers", totalUsers);
+		model.addAttribute("totalCategories", totalCategories);
+		
+		return "admin/index"; 
 	}
 	
 	@GetMapping("/about")
@@ -56,5 +87,10 @@ public class HomeController {
 	@GetMapping("/contact")
 	public String contact(Model model) {
 		return "contact";
+	}
+	
+	@GetMapping("/test")
+	public String test(Model model) {
+		return "test";
 	}
 }

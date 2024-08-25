@@ -5,18 +5,17 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.LikeRating;
 import com.bookStoreFullStack.entity.Rating;
 import com.bookStoreFullStack.entity.User;
-import com.bookStoreFullStack.repository.LikeRepository;
-import com.bookStoreFullStack.service.LikeService;
+import com.bookStoreFullStack.repository.LikeRatingRepository;
+import com.bookStoreFullStack.service.LikeRatingService;
 
 @Service
-public class LikeServiceImpl implements LikeService {
+public class LikeRatingServiceImpl implements LikeRatingService {
 
     @Autowired
-    private LikeRepository likeRepository;
+    private LikeRatingRepository likeRepository;
 
     @Override
     public List<LikeRating> getLikesByBook(int bookId) {
@@ -42,9 +41,10 @@ public class LikeServiceImpl implements LikeService {
         return likeRepository.findByRatingId(ratingId);
     }
     
-    @Override
-    public LikeRating findLikeByUserAndRating(User user, Rating rating) {
-        return likeRepository.findByUserAndRating(user, rating);
-    }
 
+
+	@Override
+	public LikeRating getLikeRatingByUserAndRating(User user, Rating rating) {
+		return likeRepository.findByUserAndRating(user, rating);
+	}
 }

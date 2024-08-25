@@ -244,7 +244,7 @@
 				</span>
 
 		        <!-- Nút Like -->
-		        <form th:action="@{/rating/addLike/{id}(id=${review.id})}" method="post" style="display: inline;">
+		        <form th:action="@{/rating/addDelLike/{id}(id=${review.id})}" method="post" style="display: inline;">
 			        <button class="btn btn-primary btn-sm" style="border: none; background-color: #007bff; color: white; font-size: 14px; cursor: pointer; border-radius: 5px; padding: 5px 10px; transition: background-color 0.3s;">
 			          Like
 			        </button>

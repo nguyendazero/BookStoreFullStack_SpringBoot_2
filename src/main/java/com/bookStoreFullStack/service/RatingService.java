@@ -17,5 +17,5 @@ public interface RatingService {
 	
 	List<Rating> getRatingsByBookId(int bookId);
 	 
-	public double calculateAverageStars(int bookId);
+	double calculateAverageStars(int bookId);
 }
