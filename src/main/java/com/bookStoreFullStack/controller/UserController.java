@@ -64,6 +64,8 @@ public class UserController {
 		return "register";
 	}
 	
+	
+	
 	@PostMapping("/user/register")
 	public String register(@RequestParam("username") String username,
 			@RequestParam("repassword") String repassword,
@@ -181,6 +183,11 @@ public class UserController {
 	}
 	
 	/*****************************ADMIN*********************************/
+	
+	@GetMapping("/admin/user")
+	public String ManagerUser(Model model) {
+		return "admin/user";
+	}
 	
 
 }

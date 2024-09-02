@@ -5,14 +5,27 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.5</version>
+		<version>3.3.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.bookStoreFullStack</groupId>
-	<artifactId>bookStoreFullStack</artifactId>
+	<groupId>com.bookStoreFullStack2</groupId>
+	<artifactId>bookStoreFullStack2</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>bookStoreFullStack</name>
-	<description>project bookStoreFullStack</description>
+	<name>bookStoreFullStack2</name>
+	<description>project bookStoreFullStack2</description>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
