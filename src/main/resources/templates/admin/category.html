@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Category Management</title>
+    <link th:href="@{/css/style-category.css}" rel="stylesheet">
+    <script th:src="@{/js/category-admin.js}" defer></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div th:replace="partials/sidebar"></div>
+    
+    <div class="container" style="margin-left: 250px; padding: 20px;">
+        <h1 class="text-center my-4">Category Management</h1>
+
+        <!-- Add New Category Button -->
+        <div class="mb-4 text-right">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addCategoryModal" style="padding: 8px 16px; font-size: 16px; text-decoration: none;">
+                Add New Category
+            </button>
+        </div>
+        
+        <!-- Add Category Modal -->
+        <div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form th:action="@{/admin/category/save}" method="post">
+                            <div class="form-group">
+                                <label for="name">Category Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-success">Save Category</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Edit Category Modal -->
+        <div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form th:action="@{/admin/category/update}" method="post">
+                            <input type="hidden" id="editCategoryId" name="id" />
+                            <div class="form-group">
+                                <label for="editCategoryName">Category Name</label>
+                                <input type="text" class="form-control" id="editCategoryName" name="name" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-success">Update Category</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category List -->
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr style="background-color: #f8f9fa; color: #333; font-weight: bold;">
+                    <th style="padding: 12px 15px; border: 1px solid #dee2e6;">Id</th>
+                    <th style="padding: 12px 15px; border: 1px solid #dee2e6;">Name</th>
+                    <th style="padding: 12px 15px; border: 1px solid #dee2e6;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="category : ${categories}" style="border-bottom: 1px solid #dee2e6;">
+                    <td style="padding: 12px 15px;" th:text="${category.id}"></td>
+                    <td style="padding: 12px 15px;" th:text="${category.name}"></td>
+                    <td style="padding: 12px 15px;">
+                        <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editCategoryModal"
+                           th:data-id="${category.id}" th:data-name="${category.name}"
+                           style="padding: 5px 10px; font-size: 14px; text-decoration: none;">Edit</a>
+                        <a th:href="@{/admin/categories/delete/{id}(id=${category.id})}" class="btn btn-danger btn-sm"
+                           style="padding: 5px 10px; font-size: 14px; text-decoration: none;">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Populate the Edit Category Modal with data
+        $('#editCategoryModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var categoryId = button.data('id'); // Extract info from data-* attributes
+            var categoryName = button.data('name');
+            
+            var modal = $(this);
+            modal.find('#editCategoryId').val(categoryId);
+            modal.find('#editCategoryName').val(categoryName);
+        });
+    </script>
+</body>
+</html>

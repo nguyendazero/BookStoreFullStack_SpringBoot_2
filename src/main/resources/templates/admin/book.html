@@ -3,47 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <title>Book Management</title>
-    <link th:href="@{/css/style3.css}" rel="stylesheet">
+    <link th:href="@{/css/style-book.css}" rel="stylesheet">
     <script th:src="@{/js/book-admin.js}" defer></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <!-- Sidebar -->
-	<div th:replace="partials/sidebar"></div>
+    <div th:replace="partials/sidebar"></div>
     
     <div class="container">
-        <h1 class="text-center my-4">Book Management</h1>
+        <h1 class="text-center my-4" style="text-align: center;">Book Management</h1>
 
         <!-- Add New Book Button -->
-        <div class="mb-4 text-right">
-            <a th:href="@{/admin/book/add}" class="btn btn-success">Add New Book</a>
+        <div class="mb-4 text-right" style="margin-right: 20px;">
+            <a th:href="@{/admin/book/add}" class="btn btn-success" style="padding: 8px 16px; font-size: 16px;  text-decoration: none;">Add New Book</a>
         </div>
 
         <!-- Book List -->
-        <table class="table table-hover">
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
             <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Author</th>
-                    <th>Price</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                <tr style="background-color: #f4f4f4; border-bottom: 2px solid #ddd;">
+                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">Image</th>
+                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">Name</th>
+                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">Category</th>
+                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">Author</th>
+                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">Price</th>
+                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">Status</th>
+                    <th style="padding: 12px; text-align: left;">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="book : ${books}">
-                    <td>
-                        <img th:src="@{${book.image}}" alt="Book Image" class="img-thumbnail" style="width: 100px;">
+                <tr th:each="book : ${books}" style="border-bottom: 1px solid #ddd;">
+                    <td data-label="Image" style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">
+                        <img th:src="@{${book.image}}" alt="Book Image" style="width: 100px; border-radius: 5px;">
                     </td>
-                    <td th:text="${book.name}"></td>
-                    <td th:text="${book.category.name}"></td>
-                    <td th:text="${book.author.fullName}"></td>
-                    <td th:text="${book.price} + ' $'"></td>
-                    <td th:text="${book.status}"></td>
-                    <td>
-                        <a th:href="@{/admin/books/edit/{id}(id=${book.id})}" class="btn btn-primary btn-sm">Edit</a>
-                        <a th:href="@{/admin/books/delete/{id}(id=${book.id})}" class="btn btn-danger btn-sm">Delete</a>
+                    <td data-label="Name" style="padding: 12px; text-align: left; border-right: 1px solid #ddd;" th:text="${book.name}"></td>
+                    <td data-label="Category" style="padding: 12px; text-align: left; border-right: 1px solid #ddd;" th:text="${book.category.name}"></td>
+                    <td data-label="Author" style="padding: 12px; text-align: left; border-right: 1px solid #ddd;" th:text="${book.author.fullName}"></td>
+                    <td data-label="Price" style="padding: 12px; text-align: left; border-right: 1px solid #ddd;" th:text="${book.price}"></td>
+                    <td data-label="Status" style="padding: 12px; text-align: left; border-right: 1px solid #ddd;" th:text="${book.status}"></td>
+                    <td data-label="Actions" style="text-align: center;">
+                        <a th:href="@{/admin/books/edit/{id}(id=${book.id})}" class="btn btn-primary btn-sm" style="background-color: #007bff; color: white;  padding: 4px 8px; text-decoration: none; margin-right: 5px;">Edit</a>
+                        <br>
+                        <br>     
+                        <a th:href="@{/admin/books/delete/{id}(id=${book.id})}" class="btn btn-danger btn-sm" style="background-color: #dc3545; color: white; padding: 4px 8px; text-decoration: none;">Delete</a>
                     </td>
                 </tr>
             </tbody>

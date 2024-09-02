@@ -1,10 +1,77 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="ISO-8859-1">
-<title>Trang Chủ</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Sách Mới</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
+    <link th:href="@{/css/style-admin.css}" rel="stylesheet">
 </head>
 <body>
-	<h1>addboook</h1>
+    <!-- Sidebar -->
+    <div th:replace="partials/sidebar"></div>
+
+    <!-- Page Content -->
+    <div id="content">
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <button type="button" id="sidebarCollapse" class="btn btn-primary">
+                <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand ms-3" href="#">Bookstore Admin</a>
+            <div class="ml-auto">
+                <a href="/admin/profile" class="btn btn-secondary me-2">Profile</a>
+                <a th:href="@{/user/logout}" class="btn btn-danger">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="container mt-4">
+            <h1>Thêm Sách Mới</h1>
+            <form action="/admin/books/add" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Tên Sách</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="averageStars" class="form-label">Số lượng</label>
+                    <input type="number" step="0.1" class="form-control" id="averageStars" name="averageStars" required>
+                </div>
+                <div class="mb-3">
+                    <label for="category" class="form-label">Danh Mục</label>
+                    <select class="form-control" id="category" name="categoryId" required>
+                        <!-- Các tùy chọn danh mục sẽ được tạo động ở phía server -->
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="author" class="form-label">Tác Giả</label>
+                    <select class="form-control" id="author" name="authorId" required>
+                        <!-- Các tùy chọn tác giả sẽ được tạo động ở phía server -->
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Giá</label>
+                    <input type="number" step="0.01" class="form-control" id="price" name="price" required>
+                </div>
+                <div class="mb-3">
+                    <label for="image" class="form-label">Hình Ảnh</label>
+                    <input type="file" class="form-control" id="image" name="image" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Mô Tả</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Thêm Sách</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/main-admin.js}"></script>
 </body>
 </html>

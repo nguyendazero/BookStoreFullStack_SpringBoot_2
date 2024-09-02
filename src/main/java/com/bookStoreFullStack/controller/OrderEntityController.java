@@ -55,5 +55,14 @@ public class OrderEntityController {
     	model.addAttribute("orders", orders);
     	return "orders-history";
     }
+    
+    
+    //------Admin-----
+    @GetMapping("/admin/order")
+    public String ManagerOrder(Model model) {
+    	List<OrderEntity> orders = orderEntityService.getAllOrderEntity();
+    	model.addAttribute("orders", orders);
+    	return "admin/order";
+    }
 
 }

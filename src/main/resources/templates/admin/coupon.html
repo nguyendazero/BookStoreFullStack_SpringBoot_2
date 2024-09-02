@@ -1,10 +1,150 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="ISO-8859-1">
-<title>Trang Chủ</title>
+    <meta charset="UTF-8">
+    <title>Coupon Management</title>
+    <link th:href="@{/css/style-coupon.css}" rel="stylesheet">
+    <script th:src="@{/js/coupon-admin.js}" defer></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-	<h1>hello</h1>
+    <!-- Sidebar -->
+    <div th:replace="partials/sidebar"></div>
+    
+    <div class="container" style="margin-left: 250px; padding: 20px;">
+        <h1 class="text-center my-4">Coupon Management</h1>
+
+        <!-- Add New Coupon Button -->
+        <div class="mb-4 text-right">
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addCouponModal" style="padding: 8px 16px; font-size: 16px; text-decoration: none;">
+                Add New Coupon
+            </button>
+        </div>
+        
+        <!-- Add Coupon Modal -->
+        <div class="modal fade" id="addCouponModal" tabindex="-1" role="dialog" aria-labelledby="addCouponModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCouponModalLabel">Add New Coupon</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form th:action="@{/admin/coupon/save}" method="post">
+                            <div class="form-group">
+                                <label for="code">Coupon Code</label>
+                                <input type="text" class="form-control" id="code" name="code" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expiry">Expiry Date</label>
+                                <input type="date" class="form-control" id="expiry" name="expiry" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="discount">Discount (%)</label>
+                                <input type="number" class="form-control" id="discount" name="discount" min="0" max="100" step="1" required>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-success">Save Coupon</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Coupon Modal -->
+        <div class="modal fade" id="editCouponModal" tabindex="-1" role="dialog" aria-labelledby="editCouponModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editCouponModalLabel">Edit Coupon</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form th:action="@{/admin/coupon/update}" method="post">
+                            <input type="hidden" id="editCouponId" name="id">
+                            <div class="form-group">
+                                <label for="editCode">Coupon Code</label>
+                                <input type="text" class="form-control" id="editCode" name="code" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editExpiry">Expiry Date</label>
+                                <input type="date" class="form-control" id="editExpiry" name="expiry" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="editDiscount">Discount (%)</label>
+                                <input type="number" class="form-control" id="editDiscount" name="discount" min="0" max="100" step="1" required>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-success">Update Coupon</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coupon List -->
+        <table class="table table-hover" style="margin-top: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+            <thead>
+                <tr style="background-color: #f8f9fa;">
+                    <th style="border-bottom: 2px solid #dee2e6; padding: 15px; text-align: left; color: #343a40;">Code</th>
+                    <th style="border-bottom: 2px solid #dee2e6; padding: 15px; text-align: left; color: #343a40;">Expiry</th>
+                    <th style="border-bottom: 2px solid #dee2e6; padding: 15px; text-align: left; color: #343a40;">Discount</th>
+                    <th style="border-bottom: 2px solid #dee2e6; padding: 15px; text-align: left; color: #343a40;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="coupon : ${coupons}" style="border-bottom: 1px solid #dee2e6;">
+                    <td style="padding: 15px;" th:text="${coupon.code}"></td>
+                    <td style="padding: 15px;" th:text="${#dates.format(coupon.expiry, 'yyyy-MM-dd')}"></td>
+                    <td style="padding: 15px;" th:text="${coupon.discount} + '%'"></td>
+                    <td style="padding: 15px;">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editCouponModal" 
+                            th:data-id="${coupon.id}"
+                            th:data-code="${coupon.code}"
+                            th:data-expiry="${#dates.format(coupon.expiry, 'yyyy-MM-dd')}"
+                            th:data-discount="${coupon.discount}">
+                            Edit
+                        </button>
+                        <a th:href="@{/admin/coupons/delete/{id}(id=${coupon.id})}" class="btn btn-danger btn-sm" style="padding: 5px 10px; font-size: 14px; text-decoration: none;">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- JavaScript to handle modal population -->
+    <script>
+        $('#editCouponModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var id = button.data('id'); // Extract info from data-* attributes
+            var code = button.data('code');
+            var expiry = button.data('expiry');
+            var discount = button.data('discount');
+
+            // Update the modal's content.
+            var modal = $(this);
+            modal.find('#editCouponId').val(id);
+            modal.find('#editCode').val(code);
+            modal.find('#editExpiry').val(expiry);
+            modal.find('#editDiscount').val(discount);
+        });
+    </script>
 </body>
 </html>

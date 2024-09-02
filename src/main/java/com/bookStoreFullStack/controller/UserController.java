@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.Cart;
@@ -186,7 +188,46 @@ public class UserController {
 	
 	@GetMapping("/admin/user")
 	public String ManagerUser(Model model) {
+		List<User> users = userService.getAllUsers();
+		model.addAttribute("users", users);
 		return "admin/user";
+	}
+	
+	@GetMapping("/admin/users/edit-role/{id}")
+	public String editRole(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+		User userLogin = (User) session.getAttribute("userLogin");
+		if(userLogin == null) {
+			return "redirect:/user/login-page";
+		}
+		
+		if(userLogin.getUserName().equals("admin")) {
+			User userGet = userService.getUserById(id);
+			if(userGet.getRole() == 0) {
+				userGet.setRole(1);
+				userService.saveUser(userGet);
+			}else {
+				userGet.setRole(0);
+				userService.saveUser(userGet);
+			}
+		}else {
+			redirectAttributes.addFlashAttribute("error", "Bạn không có quyền này!");
+		}
+		return "redirect:/admin/user";
+	}
+	
+	@GetMapping("/admin/users/delete/{id}")
+	public String deleteUser(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
+		User userLogin = (User) session.getAttribute("userLogin");
+		if(userLogin == null) {
+			return "redirect:/user/login-page";
+		}
+		
+		if(userLogin.getUserName().equals("admin")) {
+			userService.deleteUser(id);
+		}else {
+			redirectAttributes.addFlashAttribute("error", "Bạn không có quyền này!");
+		}
+		return "redirect:/admin/user";
 	}
 	
 

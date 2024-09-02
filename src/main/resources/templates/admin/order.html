@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Management</title>
+    <link th:href="@{/css/style-order.css}" rel="stylesheet">
+    <script th:src="@{/js/order-admin.js}" defer></script>
+    <!-- Bootstrap CSS -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div th:replace="partials/sidebar"></div>
+
+    <div class="container" style="margin-left: 250px; padding: 20px;">
+        <h1 class="text-center my-4">Order Management</h1>
+
+        <!-- Order List -->
+        <table class="table" style="margin-top: 20px;">
+            <thead>
+                <tr style="background-color: #f8f9fa; color: #333; font-weight: bold;">
+                    <th style="padding: 12px 15px; border: 1px solid #dee2e6;">ID</th>
+                    <th style="padding: 12px 15px; border: 1px solid #dee2e6;">Date</th>
+                    <th style="padding: 12px 15px; border: 1px solid #dee2e6;">Total</th>
+                    <th style="padding: 12px 15px; border: 1px solid #dee2e6;">Payment Method</th>
+                    <th style="padding: 12px 15px; border: 1px solid #dee2e6;">Status</th>
+                    <th style="padding: 12px 15px; border: 1px solid #dee2e6;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="order : ${orders}" style="border-bottom: 1px solid #dee2e6;">
+                    <td style="padding: 12px 15px;" th:text="${order.id}"></td>
+                    <td style="padding: 12px 15px;" th:text="${order.date}"></td>
+                    <td style="padding: 12px 15px;" th:text="${order.total}"></td>
+                    <td style="padding: 12px 15px;" th:text="${order.paymentMethod}"></td>
+                    <td style="padding: 12px 15px;" th:text="${order.status}"></td>
+                    <td style="padding: 12px 15px;">
+                        <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" th:data-bs-target="'#orderModal' + ${order.id}">View</button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" th:id="'orderModal' + ${order.id}" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="orderModalLabel">Order Details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Image</th>
+                                                    <th>Product</th>
+                                                    <th>Quantity</th>
+                                                    <th>Price</th>
+                                                    <th>Total</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="detail : ${order.orderDetails}">
+                                                    <td>
+                                                        <img th:src="@{${detail.book.image}}" alt="Image" class="img-fluid" style="height: 100px;">
+                                                    </td>
+                                                    <td th:text="${detail.book.name}"></td>
+                                                    <td th:text="${detail.quantity}"></td>
+                                                    <td th:text="${detail.price / detail.quantity}"></td>
+                                                    <td th:text="${detail.price}"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
