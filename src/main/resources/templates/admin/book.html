@@ -3,55 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <title>Book Management</title>
-    <link th:href="@{/css/style-book.css}" rel="stylesheet">
-    <script th:src="@{/js/book-admin.js}" defer></script>
     <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/style-book.css}" rel="stylesheet">
+    <!-- Custom JavaScript -->
+    <script th:src="@{/js/book-admin.js}" defer></script>
 </head>
 <body>
     <!-- Sidebar -->
     <div th:replace="partials/sidebar"></div>
     
     <div class="container">
-        <h1 class="text-center my-4" style="text-align: center;">Book Management</h1>
+        <h1 class="text-center my-4">Book Management</h1>
 
         <!-- Add New Book Button -->
-        <div class="mb-4 text-right" style="margin-right: 20px;">
-            <a th:href="@{/admin/book/add}" class="btn btn-success" style="padding: 8px 16px; font-size: 16px;  text-decoration: none;">Add New Book</a>
+        <div class="mb-4 text-right">
+            <a th:href="@{/admin/book/add}" class="btn btn-success">Add New Book</a>
         </div>
 
         <!-- Book List -->
-        <table style="width: 100%; border-collapse: collapse; margin-top: 20px; background-color: white; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+        <table class="table table-bordered table-striped" style="width: 112%;;">
             <thead>
-                <tr style="background-color: #f4f4f4; border-bottom: 2px solid #ddd;">
-                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">Image</th>
-                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">Name</th>
-                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">Category</th>
-                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">Author</th>
-                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">Price</th>
-                    <th style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">Status</th>
-                    <th style="padding: 12px; text-align: left;">Actions</th>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Author</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="book : ${books}" style="border-bottom: 1px solid #ddd;">
-                    <td data-label="Image" style="padding: 12px; text-align: left; border-right: 1px solid #ddd;">
+                <tr th:each="book : ${books}">
+                    <td>
                         <img th:src="@{${book.image}}" alt="Book Image" style="width: 100px; border-radius: 5px;">
                     </td>
-                    <td data-label="Name" style="padding: 12px; text-align: left; border-right: 1px solid #ddd;" th:text="${book.name}"></td>
-                    <td data-label="Category" style="padding: 12px; text-align: left; border-right: 1px solid #ddd;" th:text="${book.category.name}"></td>
-                    <td data-label="Author" style="padding: 12px; text-align: left; border-right: 1px solid #ddd;" th:text="${book.author.fullName}"></td>
-                    <td data-label="Price" style="padding: 12px; text-align: left; border-right: 1px solid #ddd;" th:text="${book.price}"></td>
-                    <td data-label="Status" style="padding: 12px; text-align: left; border-right: 1px solid #ddd;" th:text="${book.status}"></td>
-                    <td data-label="Actions" style="text-align: center;">
-                        <a th:href="@{/admin/books/edit/{id}(id=${book.id})}" class="btn btn-primary btn-sm" style="background-color: #007bff; color: white;  padding: 4px 8px; text-decoration: none; margin-right: 5px;">Edit</a>
+                    <td th:text="${book.name}"></td>
+                    <td th:text="${book.category.name}"></td>
+                    <td th:text="${book.author.fullName}"></td>
+                    <td th:text="${book.quantity}"></td>
+                    <td th:text="${book.price}"></td>
+                    <td th:text="${book.status}"></td>
+                    <td>
+                        <!-- Edit Button -->
+                        <button style="width: 70px;" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#editBookModal"
+                            th:attr="data-id=${book.id}, data-name=${book.name}, data-category=${book.category.id}, data-author=${book.author.id}, data-price=${book.price}, data-quantity=${book.quantity}, data-status=${book.status}, data-description=${book.description}, data-image=${book.image}">
+                            Edit
+                        </button>
                         <br>
-                        <br>     
-                        <a th:href="@{/admin/books/delete/{id}(id=${book.id})}" class="btn btn-danger btn-sm" style="background-color: #dc3545; color: white; padding: 4px 8px; text-decoration: none;">Delete</a>
+                        <br>
+                        <!-- Delete Button -->
+                        <a style="width: 70px;" th:href="@{/admin/books/delete/{id}(id=${book.id})}" class="btn btn-danger btn-sm">Delete</a>
                     </td>
                 </tr>
             </tbody>
         </table>
     </div>
+
+    <!-- Edit Book Modal -->
+<div class="modal fade" id="editBookModal" tabindex="-1" role="dialog" aria-labelledby="editBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form th:action="@{/admin/book/update}" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editBookModalLabel">Edit Book</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="edit-book-id">
+                    <div class="form-group">
+                        <label for="edit-book-name">Name</label>
+                        <input type="text" class="form-control" id="edit-book-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-category">Category</label>
+                        <select class="form-control" id="edit-book-category" name="category.id" required>
+                            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-author">Author</label>
+                        <select class="form-control" id="edit-book-author" name="author.id" required>
+                            <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.fullName}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-quantity">Quantity</label>
+                        <input type="number" min="0" class="form-control" id="edit-book-quantity" name="quantity" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-price">Price</label>
+                        <input type="number" step="0.01" min="0" class="form-control" id="edit-book-price" name="price" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-status">Status</label>
+                        <select class="form-control" id="edit-book-status" name="status" required>
+                            <option th:each="status : ${statuses}" th:value="${status}" th:text="${status}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-image">Image</label>
+                        <input type="text" class="form-control" id="edit-book-image" name="image" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-book-description">Description</label>
+                        <textarea class="form-control" id="edit-book-description" name="description" rows="3"></textarea>
+                    </div>
+                    
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- JavaScript to populate modal with book data -->
+    <script>
+    $('#editBookModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var modal = $(this);
+
+        modal.find('#edit-book-id').val(button.data('id'));
+        modal.find('#edit-book-name').val(button.data('name'));
+        modal.find('#edit-book-category').val(button.data('category'));
+        modal.find('#edit-book-author').val(button.data('author'));
+        modal.find('#edit-book-price').val(button.data('price'));
+        modal.find('#edit-book-quantity').val(button.data('quantity'));
+        modal.find('#edit-book-status').val(button.data('status'));
+        modal.find('#edit-book-description').val(button.data('description'));
+        modal.find('#edit-book-image').val(button.data('image'));
+    });
+</script>
+
 </body>
 </html>

@@ -9,14 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.bookStoreFullStack.entity.Author;
 import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.Category;
 import com.bookStoreFullStack.entity.LikeRating;
 import com.bookStoreFullStack.entity.Rating;
 import com.bookStoreFullStack.entity.User;
+import com.bookStoreFullStack.service.AuthorService;
 import com.bookStoreFullStack.service.BookService;
 import com.bookStoreFullStack.service.CategoryService;
 import com.bookStoreFullStack.service.LikeRatingService;
@@ -36,6 +40,8 @@ public class BookController {
     private LikeRatingService likeService;
 	@Autowired
 	private RatingService ratingService;
+	@Autowired
+	private AuthorService authorService;
 	
 	@GetMapping("/book-filter")
 	public String bookFilter(Model model) {
@@ -136,16 +142,34 @@ public class BookController {
 	 @GetMapping("/admin/book")
 	 public String BookManager(Model model) {
 		 List<Book> books = bookService.getAllBooks();
-			List<Category> categories = categoryService.getAllCategories();
+		 List<Category> categories = categoryService.getAllCategories();
+		 List<Author> authors = authorService.getAllAuthors();
+		 List<String> statuses = List.of("runout", "onsale", "discount");
 			
-			model.addAttribute("books", books);
-			model.addAttribute("categories", categories);
+		 model.addAttribute("books", books);
+		 model.addAttribute("categories", categories);
+		 model.addAttribute("authors", authors);
+		 model.addAttribute("statuses", statuses);
 		 return "admin/book";
 	 }
 	 
 	 @GetMapping("/admin/book/add")
 	 public String addBook(Model model) {
 		 return "admin/add-book";
+	 }
+	 
+	 @PostMapping("/admin/book/update")
+	 public String updateBook(@ModelAttribute("book") Book updateBook) {
+		 Book b = bookService.getBookById(updateBook.getId());
+		 updateBook.setAverageStars(b.getAverageStars());
+		 bookService.saveBook(updateBook);
+		 return "redirect:/admin/book";
+	 }
+	 
+	 @GetMapping("/admin/books/delete/{id}")
+	 public String deleteBook(@PathVariable("id") int id) {
+		 bookService.deleteBook(id);
+		 return "redirect:/admin/book";
 	 }
 	 
 	 
