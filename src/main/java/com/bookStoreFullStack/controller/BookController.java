@@ -1,8 +1,11 @@
 package com.bookStoreFullStack.controller;
 
 
+import java.util.Collections;
 import java.util.List;
-
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bookStoreFullStack.entity.Author;
 import com.bookStoreFullStack.entity.Book;
@@ -25,6 +29,8 @@ import com.bookStoreFullStack.service.BookService;
 import com.bookStoreFullStack.service.CategoryService;
 import com.bookStoreFullStack.service.LikeRatingService;
 import com.bookStoreFullStack.service.RatingService;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -42,6 +48,7 @@ public class BookController {
 	private RatingService ratingService;
 	@Autowired
 	private AuthorService authorService;
+
 	
 	@GetMapping("/book-filter")
 	public String bookFilter(Model model) {
@@ -141,7 +148,12 @@ public class BookController {
 	 
 	 @GetMapping("/admin/book")
 	 public String BookManager(Model model) {
-		 List<Book> books = bookService.getAllBooks();
+		 List<Book> booksTruocReverse = bookService.getAllBooks();
+		 List<Book> books = booksTruocReverse.stream()
+                 .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+                     Collections.reverse(list);
+                     return list;
+                 }));
 		 List<Category> categories = categoryService.getAllCategories();
 		 List<Author> authors = authorService.getAllAuthors();
 		 List<String> statuses = List.of("runout", "onsale", "discount");
@@ -154,7 +166,7 @@ public class BookController {
 	 }
 	 
 	 @GetMapping("/admin/book/add-page")
-	 public String addBook(Model model) {
+	 public String addBookPage(Model model) {
 		 List<Category> categories = categoryService.getAllCategories();
 		 List<Author> authors = authorService.getAllAuthors();
 		 
@@ -163,6 +175,55 @@ public class BookController {
 		 return "admin/add-book";
 	 }
 	 
+	 @PostMapping("/admin/book/add")
+	 public String addBook(@RequestParam("name") String name,
+	                        @RequestParam("quantity") int quantity,
+	                        @RequestParam("price") double price,
+	                        @RequestParam("description") String description,
+	                        @RequestParam("category.id") int categoryId,
+	                        @RequestParam("author.id") int authorId,
+	                        @RequestParam("image") MultipartFile imageFile) {
+
+	     String imageUrl = uploadImageToCloudinary(imageFile);
+
+	     Author author = authorService.getAuthorById(authorId);
+	     Category category = categoryService.getCategoryById(categoryId);
+	    
+	     Book book = new Book();
+	     book.setName(name);
+	     book.setQuantity(quantity);
+	     book.setPrice(price);
+	     book.setDescription(description);
+	     book.setImage(imageUrl);
+	     book.setAverageStars(0);
+	     book.setStatus("onsale");
+	     book.setAuthor(author);
+	     book.setCategory(category);
+	     
+	     bookService.saveBook(book);
+
+	     return "redirect:/admin/book";
+	 }
+
+	 @SuppressWarnings("unchecked")
+	 private String uploadImageToCloudinary(MultipartFile file) {
+	     Cloudinary cloudinary = new Cloudinary(ObjectUtils.asMap(
+	         "cloud_name", "dzihbbinr",
+	         "api_key", "424214716917593",
+	         "api_secret", "TaJ7wj3NFhFB_RV8CkBsXERYJiM"
+	     ));
+
+	     try {
+	         Map<String, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+	         String secureUrl = (String) uploadResult.get("secure_url");
+	         return secureUrl;
+	     } catch (IOException e) {
+	         e.printStackTrace();
+	         return null;
+	     }
+	 }
+
+
 	 @PostMapping("/admin/book/update")
 	 public String updateBook(@ModelAttribute("book") Book updateBook) {
 		 Book b = bookService.getBookById(updateBook.getId());
