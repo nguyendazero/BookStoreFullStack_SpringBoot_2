@@ -153,8 +153,13 @@ public class BookController {
 		 return "admin/book";
 	 }
 	 
-	 @GetMapping("/admin/book/add")
+	 @GetMapping("/admin/book/add-page")
 	 public String addBook(Model model) {
+		 List<Category> categories = categoryService.getAllCategories();
+		 List<Author> authors = authorService.getAllAuthors();
+		 
+		 model.addAttribute("categories", categories);
+		 model.addAttribute("authors", authors);
 		 return "admin/add-book";
 	 }
 	 

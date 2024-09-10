@@ -13,6 +13,15 @@
     <script th:src="@{/js/book-admin.js}" defer></script>
 </head>
 <body>
+	<!-- Role Check -->
+    <div th:if="${session.userLogin.role != 1}" style="text-align: center; margin-top: 50px;">
+	    <h2 style="color: #d9534f; font-family: Arial, sans-serif;">You do not have access to this page</h2>
+	    <a th:href="@{/home}" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #5bc0de; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">
+	        Go back to home
+	    </a>
+	</div>
+    
+     <div th:if="${session.userLogin.role == 1}">
     <!-- Sidebar -->
     <div th:replace="partials/sidebar"></div>
     
@@ -21,7 +30,7 @@
 
         <!-- Add New Book Button -->
         <div class="mb-4 text-right">
-            <a th:href="@{/admin/book/add}" class="btn btn-success">Add New Book</a>
+            <a th:href="@{/admin/book/add-page}" class="btn btn-success">Add New Book</a>
         </div>
 
         <!-- Book List -->
@@ -135,21 +144,21 @@
 
     <!-- JavaScript to populate modal with book data -->
     <script>
-    $('#editBookModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget);
-        var modal = $(this);
-
-        modal.find('#edit-book-id').val(button.data('id'));
-        modal.find('#edit-book-name').val(button.data('name'));
-        modal.find('#edit-book-category').val(button.data('category'));
-        modal.find('#edit-book-author').val(button.data('author'));
-        modal.find('#edit-book-price').val(button.data('price'));
-        modal.find('#edit-book-quantity').val(button.data('quantity'));
-        modal.find('#edit-book-status').val(button.data('status'));
-        modal.find('#edit-book-description').val(button.data('description'));
-        modal.find('#edit-book-image').val(button.data('image'));
-    });
-</script>
-
+	    $('#editBookModal').on('show.bs.modal', function (event) {
+	        var button = $(event.relatedTarget);
+	        var modal = $(this);
+	
+	        modal.find('#edit-book-id').val(button.data('id'));
+	        modal.find('#edit-book-name').val(button.data('name'));
+	        modal.find('#edit-book-category').val(button.data('category'));
+	        modal.find('#edit-book-author').val(button.data('author'));
+	        modal.find('#edit-book-price').val(button.data('price'));
+	        modal.find('#edit-book-quantity').val(button.data('quantity'));
+	        modal.find('#edit-book-status').val(button.data('status'));
+	        modal.find('#edit-book-description').val(button.data('description'));
+	        modal.find('#edit-book-image').val(button.data('image'));
+	    });
+	</script>
+     </div>
 </body>
 </html>

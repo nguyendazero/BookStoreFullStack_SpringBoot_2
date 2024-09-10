@@ -12,13 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.bookStoreFullStack.entity.Book;
 import com.bookStoreFullStack.entity.Cart;
-import com.bookStoreFullStack.entity.Category;
 import com.bookStoreFullStack.entity.User;
 import com.bookStoreFullStack.service.CartService;
 import com.bookStoreFullStack.service.UserService;
-
+import com.bookStoreFullStack.utils.MaHoa;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -40,20 +38,34 @@ public class UserController {
 	
 	@PostMapping("user/login")
 	public String checkLogin(@RequestParam("username") String username, @RequestParam("password") String password, Model model) {
-	    User user = userService.getUserByUsernameAndPass(username, password);
+	    User user = userService.getUserByUsername(username);
+	    
 	    if (user != null) {
-	    	if(user.getRole() != 1) {
-	    		session.setAttribute("userLogin", user);
-		        return "redirect:/home"; 
-	    	}else {
-	    		session.setAttribute("userLogin", user);
-	    		return "redirect:/home-admin"; 
-	    	} 
+	        // Lấy salt của người dùng
+	        String salt = user.getSalt();
+	        
+	        // Mã hóa lại mật khẩu người dùng nhập vào với salt
+	        String hashedPassword = MaHoa.toSHA256(password, salt);
+	        
+	        // So sánh mật khẩu đã mã hóa với mật khẩu trong cơ sở dữ liệu
+	        if (hashedPassword.equals(user.getPassword())) {
+	            if (user.getRole() != 1) {
+	                session.setAttribute("userLogin", user);
+	                return "redirect:/home";
+	            } else {
+	                session.setAttribute("userLogin", user);
+	                return "redirect:/home-admin";
+	            }
+	        } else {
+	            model.addAttribute("error", "Tên người dùng hoặc mật khẩu không đúng!");
+	            return "login";
+	        }
 	    } else {
 	        model.addAttribute("error", "Tên người dùng hoặc mật khẩu không đúng!");
 	        return "login";
 	    }
 	}
+
 	
 	@GetMapping("/user/logout")
 	public String logout() {
@@ -69,50 +81,67 @@ public class UserController {
 	
 	
 	@PostMapping("/user/register")
-	public String register(@RequestParam("username") String username,
-			@RequestParam("repassword") String repassword,
-            @RequestParam("password") String password,
-            @RequestParam("address") String address,
-            @RequestParam("date_of_birth") Date dateOfBirth,
-            @RequestParam("gender") String gender,
-            @RequestParam("email") String email,
-            @RequestParam("full_name") String fullName,
-            @RequestParam("telephone") String telephone, Model model) {
-		
-		if(!password.equalsIgnoreCase(repassword)) {
-			model.addAttribute("error", "Mật khẩu nhập lại không khớp!");
-			return "register";
-		}
-		List<User> users = userService.getAllUsers();
-		boolean tonTai = false;
-		for (User user : users) {
-			if(username.equalsIgnoreCase(user.getUserName())) {
-				model.addAttribute("error", "Tên đăng nhập đã tồn tại!");
-				tonTai = true;
-				return "register";
-			}
-		}
-		if(tonTai != true) {
-			User newUser = new User();
-			newUser.setUserName(username);
-			newUser.setPassword(password);
-			newUser.setFullName(fullName);
-			newUser.setAddress(address);
-			newUser.setTelephone(telephone);
-			newUser.setEmail(email);
-			newUser.setDateOfBirth(dateOfBirth);
-			newUser.setGender(gender);
-			newUser.setRole(0);
-			
-			userService.saveUser(newUser);
-			
-			Cart cart = new Cart();
-	        cart.setUser(newUser);
-	        cartService.saveCart(cart);
-			model.addAttribute("error", "Đã đăng ký thành công, hãy đăng nhập!");
-		}
-		return "login";
+	public String register(
+	        @RequestParam("username") String username,
+	        @RequestParam("repassword") String repassword,
+	        @RequestParam("password") String password,
+	        @RequestParam("address") String address,
+	        @RequestParam("date_of_birth") Date dateOfBirth,
+	        @RequestParam("gender") String gender,
+	        @RequestParam("email") String email,
+	        @RequestParam("full_name") String fullName,
+	        @RequestParam("telephone") String telephone,
+	        Model model) {
+	    
+	    // Kiểm tra mật khẩu nhập lại có khớp không
+	    if (!password.equals(repassword)) {
+	        model.addAttribute("error", "Mật khẩu nhập lại không khớp!");
+	        return "register";
+	    }
+
+	    // Kiểm tra xem username đã tồn tại chưa
+	    List<User> users = userService.getAllUsers();
+	    for (User user : users) {
+	        if (username.equalsIgnoreCase(user.getUserName())) {
+	            model.addAttribute("error", "Tên đăng nhập đã tồn tại!");
+	            return "register";
+	        }
+	    }
+
+	    // Tạo salt ngẫu nhiên
+	    String salt = MaHoa.generateSalt();
+	    
+	    // Mã hóa mật khẩu với salt
+	    String hashedPassword = MaHoa.toSHA256(password, salt);
+
+	    // Tạo đối tượng người dùng mới và lưu vào cơ sở dữ liệu
+	    User newUser = new User();
+	    newUser.setUserName(username);
+	    newUser.setPassword(hashedPassword); // Lưu mật khẩu đã mã hóa
+	    newUser.setSalt(salt); // Lưu salt
+	    newUser.setFullName(fullName);
+	    newUser.setAddress(address);
+	    newUser.setTelephone(telephone);
+	    newUser.setEmail(email);
+	    newUser.setDateOfBirth(dateOfBirth);
+	    newUser.setGender(gender);
+	    newUser.setRole(0); // Mặc định là role người dùng
+
+	    // Lưu người dùng mới vào cơ sở dữ liệu
+	    userService.saveUser(newUser);
+
+	    // Tạo giỏ hàng cho người dùng mới
+	    Cart cart = new Cart();
+	    cart.setUser(newUser);
+	    cartService.saveCart(cart);
+
+	    // Thông báo đăng ký thành công
+	    model.addAttribute("error", "Đã đăng ký thành công, hãy đăng nhập!");
+	    
+	    return "login";
 	}
+
+
 	
 	@GetMapping("/user/change-pass-form")
 	public String changePassPage(Model model) {
@@ -120,34 +149,49 @@ public class UserController {
 	}
 	
 	@PostMapping("/user/change-password")
-	public String ChangePassword(@RequestParam("currentPassword") String currentPassword,
-							     @RequestParam("newPassword") String newPassword,
-							     @RequestParam("confirmPassword") String confirmPassword,
-							     Model model) {
-		String error = "";
-		User userLogin = (User) session.getAttribute("userLogin");
-		if(userLogin == null) {
-			return "redirect:/user/login-page";
-		}
-		if(!currentPassword.equalsIgnoreCase(userLogin.getPassword())) {
-			error += "Mật khẩu cũ không chính xác!";
-		}else {
-			if(!newPassword.equalsIgnoreCase(confirmPassword)) {
-				error += "Mật khẩu nhập lại không khớp!";
-			}else {
-				if(newPassword.equalsIgnoreCase(currentPassword)) {
-					error += "Mật khẩu mới không được trùng mật khẩu cũ!";
-				}else {
-					error += "Đổi mật khẩu thành công!";
-					userLogin.setPassword(newPassword);
-					userService.saveUser(userLogin);
-					return "success";
-				}
-			}
-		}
-		model.addAttribute("error", error);
-		return "change-pass";
+	public String ChangePassword(
+	        @RequestParam("currentPassword") String currentPassword,
+	        @RequestParam("newPassword") String newPassword,
+	        @RequestParam("confirmPassword") String confirmPassword,
+	        Model model) {
+	    
+	    String error = "";
+	    User userLogin = (User) session.getAttribute("userLogin");
+	    
+	    if (userLogin == null) {
+	        return "redirect:/user/login-page";
+	    }
+	    
+	    // Mã hóa mật khẩu hiện tại nhập vào với salt của người dùng
+	    String hashedCurrentPassword = MaHoa.toSHA256(currentPassword, userLogin.getSalt());
+	    
+	    // Kiểm tra mật khẩu cũ có chính xác không
+	    if (!hashedCurrentPassword.equals(userLogin.getPassword())) {
+	        error += "Mật khẩu cũ không chính xác!";
+	    } else {
+	        if (!newPassword.equals(confirmPassword)) {
+	            error += "Mật khẩu nhập lại không khớp!";
+	        } else {
+	            if (newPassword.equals(currentPassword)) {
+	                error += "Mật khẩu mới không được trùng mật khẩu cũ!";
+	            } else {
+	                // Mã hóa mật khẩu mới với salt hiện tại
+	                String hashedNewPassword = MaHoa.toSHA256(newPassword, userLogin.getSalt());
+	                
+	                userLogin.setPassword(hashedNewPassword);
+	                userService.saveUser(userLogin);
+	                
+	                error = "Đổi mật khẩu thành công!";
+	                model.addAttribute("message", error);
+	                return "success";
+	            }
+	        }
+	    }
+	    
+	    model.addAttribute("error", error);
+	    return "change-pass";
 	}
+
 	
 	@GetMapping("/user/update-info-form")
 	public String updateInforForm(Model model) {

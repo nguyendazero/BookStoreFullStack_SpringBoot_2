@@ -9,6 +9,15 @@
     <link th:href="@{/css/style-admin.css}" rel="stylesheet">
 </head>
 <body>
+	<!-- Role Check -->
+    <div th:if="${session.userLogin.role != 1}" style="text-align: center; margin-top: 50px;">
+	    <h2 style="color: #d9534f; font-family: Arial, sans-serif;">You do not have access to this page</h2>
+	    <a th:href="@{/home}" style="display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #5bc0de; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">
+	        Go back to home
+	    </a>
+	</div>
+    
+    <div th:if="${session.userLogin.role == 1}">
     <!-- Sidebar -->
     <div th:replace="partials/sidebar"></div>
 
@@ -29,7 +38,7 @@
         <!-- Main Content -->
         <div class="container mt-4">
             <h1>Thêm Sách Mới</h1>
-            <form action="/admin/books/add" method="post" enctype="multipart/form-data">
+            <form action="/admin/book/add" method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="name" class="form-label">Tên Sách</label>
                     <input type="text" class="form-control" id="name" name="name" required>
@@ -40,15 +49,15 @@
                 </div>
                 <div class="mb-3">
                     <label for="category" class="form-label">Danh Mục</label>
-                    <select class="form-control" id="category" name="categoryId" required>
-                        <!-- Các tùy chọn danh mục sẽ được tạo động ở phía server -->
+                    <select class="form-control" id="edit-book-category" name="category.id" required>
+                        <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="author" class="form-label">Tác Giả</label>
-                    <select class="form-control" id="author" name="authorId" required>
-                        <!-- Các tùy chọn tác giả sẽ được tạo động ở phía server -->
-                    </select>
+                    <select class="form-control" id="edit-book-author" name="author.id" required>
+                        <option th:each="author : ${authors}" th:value="${author.id}" th:text="${author.fullName}"></option>
+                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="price" class="form-label">Giá</label>
@@ -73,5 +82,6 @@
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/js/main-admin.js}"></script>
+    </div>
 </body>
 </html>

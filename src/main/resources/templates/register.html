@@ -58,7 +58,7 @@
         <div class="dktk">
             <h1>ĐĂNG KÝ TÀI KHOẢN</h1>
         </div>
-        <div class="red" id="baoLoi"></div>
+        <h6 th:if="${error}" style="color: red;" th:text="${error}"></h6>
         <form action="/user/register" method="post">
             <div class="row">
                 <div class="col">
