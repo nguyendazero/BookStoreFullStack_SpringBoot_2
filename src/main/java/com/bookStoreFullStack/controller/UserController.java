@@ -1,9 +1,10 @@
 package com.bookStoreFullStack.controller;
 
 import java.sql.Date;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,8 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -51,13 +50,10 @@ public class UserController {
 	    User user = userService.getUserByUsername(username);
 	    
 	    if (user != null) {
-	        // Lấy salt của người dùng
 	        String salt = user.getSalt();
 	        
-	        // Mã hóa lại mật khẩu người dùng nhập vào với salt
 	        String hashedPassword = MaHoa.toSHA256(password, salt);
 	        
-	        // So sánh mật khẩu đã mã hóa với mật khẩu trong cơ sở dữ liệu
 	        if (hashedPassword.equals(user.getPassword())) {
 	            if (user.getRole() != 1) {
 	                session.setAttribute("userLogin", user);
@@ -88,8 +84,6 @@ public class UserController {
 		return "register";
 	}
 	
-	
-	
 	@PostMapping("/user/register")
 	public String register(
 	        @RequestParam("username") String username,
@@ -117,32 +111,36 @@ public class UserController {
 	        return "register";
 	    }
 
-
 	    String verificationCode = String.format("%06d", new Random().nextInt(999999));
+	    LocalDateTime sentTime = LocalDateTime.now();
 
 	    try {
 	        SimpleMailMessage message = new SimpleMailMessage();
 	        message.setTo(email);
 	        message.setSubject("Xác thực tài khoản");
-	        message.setText("Mã xác thực của bạn là: " + verificationCode);
+	        message.setText("Mã xác thực của bạn là: " + verificationCode + "\nMã xác thực có hiệu lực trong 1 phút.");
 	        javaMailSender.send(message);
 	    } catch (MailException e) {
 	        model.addAttribute("error", "Gửi email thất bại. Vui lòng thử lại!");
 	        return "register";
 	    }
 
-	    model.addAttribute("username", username);
-	    model.addAttribute("password", password);
-	    model.addAttribute("address", address);
-	    model.addAttribute("dateOfBirth", dateOfBirth);
-	    model.addAttribute("gender", gender);
-	    model.addAttribute("email", email);
-	    model.addAttribute("fullName", fullName);
-	    model.addAttribute("telephone", telephone);
-	    model.addAttribute("verificationCode", verificationCode);
+	 // Lưu vào session
+        session.setAttribute("username", username);
+        session.setAttribute("password", password);
+        session.setAttribute("address", address);
+        session.setAttribute("dateOfBirth", dateOfBirth);
+        session.setAttribute("gender", gender);
+        session.setAttribute("email", email);
+        session.setAttribute("fullName", fullName);
+        session.setAttribute("telephone", telephone);
+        session.setAttribute("verificationCode", verificationCode);
+        session.setAttribute("sentTime", sentTime);
 
 	    return "verify";
 	}
+
+
 
 
 	@PostMapping("/user/verify")
@@ -157,7 +155,14 @@ public class UserController {
 	        @RequestParam("gender") String gender,
 	        @RequestParam("verificationCode") String verificationCode,
 	        @RequestParam("code") String code,
+	        @RequestParam("sentTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime sentTime,
 	        Model model) {
+
+	    // Kiểm tra thời gian hết hạn
+	    if (Duration.between(sentTime, LocalDateTime.now()).getSeconds() > 60) {
+	        model.addAttribute("error", "Mã xác thực đã hết hạn. Vui lòng yêu cầu mã mới.");
+	        return "verify";
+	    }
 
 	    if (!verificationCode.equals(code)) {
 	        model.addAttribute("error", "Mã xác thực không chính xác.");
@@ -165,7 +170,6 @@ public class UserController {
 	    }
 
 	    String salt = MaHoa.generateSalt();
-	    
 	    String hashedPassword = MaHoa.toSHA256(password, salt);
 	    
 	    User user = new User();
@@ -187,9 +191,11 @@ public class UserController {
 	    cart.setUser(user);
 	    cartService.saveCart(cart);
 
+	    session.invalidate();
 	    model.addAttribute("error", "Đăng ký thành công, hãy đăng nhập!");
 	    return "login";
 	}
+
 
 	
 	@GetMapping("/user/change-pass-form")
