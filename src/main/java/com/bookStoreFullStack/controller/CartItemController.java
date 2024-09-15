@@ -50,7 +50,7 @@ public class CartItemController {
         	return "login";
         }
         cartItemService.addToCart(id, userLogin);
-        return "redirect:/cart";
+        return "redirect:/book/"+id;
     }
     
     @GetMapping("/cart-item/removeToCart/{id}")

@@ -2,13 +2,21 @@ package com.bookStoreFullStack.controller;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.mail.MailException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -28,6 +36,8 @@ public class UserController {
 	private UserService userService;
 	@Autowired
 	private HttpSession session;
+	@Autowired
+	private JavaMailSender javaMailSender;
 	@Autowired
 	private CartService cartService;
 	
@@ -92,55 +102,94 @@ public class UserController {
 	        @RequestParam("full_name") String fullName,
 	        @RequestParam("telephone") String telephone,
 	        Model model) {
-	    
-	    // Kiểm tra mật khẩu nhập lại có khớp không
+
 	    if (!password.equals(repassword)) {
 	        model.addAttribute("error", "Mật khẩu nhập lại không khớp!");
 	        return "register";
 	    }
+	    
+	    User userExist = userService.getUserByUsername(username);
+	    User userEmail = userService.getUserByEmail(email);
 
-	    // Kiểm tra xem username đã tồn tại chưa
-	    List<User> users = userService.getAllUsers();
-	    for (User user : users) {
-	        if (username.equalsIgnoreCase(user.getUserName())) {
-	            model.addAttribute("error", "Tên đăng nhập đã tồn tại!");
-	            return "register";
-	        }
+	    if (userExist != null || userEmail != null) {
+	        String error = (userExist != null) ? "Tên đăng nhập đã tồn tại!" : "Email này đã đăng ký tài khoản, hãy chọn email khác!";
+	        model.addAttribute("error", error);
+	        return "register";
 	    }
 
-	    // Tạo salt ngẫu nhiên
+
+	    String verificationCode = String.format("%06d", new Random().nextInt(999999));
+
+	    try {
+	        SimpleMailMessage message = new SimpleMailMessage();
+	        message.setTo(email);
+	        message.setSubject("Xác thực tài khoản");
+	        message.setText("Mã xác thực của bạn là: " + verificationCode);
+	        javaMailSender.send(message);
+	    } catch (MailException e) {
+	        model.addAttribute("error", "Gửi email thất bại. Vui lòng thử lại!");
+	        return "register";
+	    }
+
+	    model.addAttribute("username", username);
+	    model.addAttribute("password", password);
+	    model.addAttribute("address", address);
+	    model.addAttribute("dateOfBirth", dateOfBirth);
+	    model.addAttribute("gender", gender);
+	    model.addAttribute("email", email);
+	    model.addAttribute("fullName", fullName);
+	    model.addAttribute("telephone", telephone);
+	    model.addAttribute("verificationCode", verificationCode);
+
+	    return "verify";
+	}
+
+
+	@PostMapping("/user/verify")
+	public String verifyCode(
+	        @RequestParam("username") String username,
+	        @RequestParam("fullName") String fullName,
+	        @RequestParam("dateOfBirth") Date dateOfBirth, 
+	        @RequestParam("password") String password,
+	        @RequestParam("address") String address,
+	        @RequestParam("telephone") String telephone,
+	        @RequestParam("email") String email,
+	        @RequestParam("gender") String gender,
+	        @RequestParam("verificationCode") String verificationCode,
+	        @RequestParam("code") String code,
+	        Model model) {
+
+	    if (!verificationCode.equals(code)) {
+	        model.addAttribute("error", "Mã xác thực không chính xác.");
+	        return "verify";
+	    }
+
 	    String salt = MaHoa.generateSalt();
 	    
-	    // Mã hóa mật khẩu với salt
 	    String hashedPassword = MaHoa.toSHA256(password, salt);
-
-	    // Tạo đối tượng người dùng mới và lưu vào cơ sở dữ liệu
-	    User newUser = new User();
-	    newUser.setUserName(username);
-	    newUser.setPassword(hashedPassword); // Lưu mật khẩu đã mã hóa
-	    newUser.setSalt(salt); // Lưu salt
-	    newUser.setFullName(fullName);
-	    newUser.setAddress(address);
-	    newUser.setTelephone(telephone);
-	    newUser.setEmail(email);
-	    newUser.setDateOfBirth(dateOfBirth);
-	    newUser.setGender(gender);
-	    newUser.setRole(0); // Mặc định là role người dùng
-
-	    // Lưu người dùng mới vào cơ sở dữ liệu
-	    userService.saveUser(newUser);
+	    
+	    User user = new User();
+	    user.setUserName(username);
+	    user.setPassword(hashedPassword); 
+	    user.setSalt(salt); 
+	    user.setFullName(fullName);
+	    user.setAddress(address);
+	    user.setTelephone(telephone);
+	    user.setEmail(email);
+	    user.setDateOfBirth(dateOfBirth);
+	    user.setGender(gender);
+	    user.setRole(0);
+	    
+	    userService.saveUser(user);
 
 	    // Tạo giỏ hàng cho người dùng mới
 	    Cart cart = new Cart();
-	    cart.setUser(newUser);
+	    cart.setUser(user);
 	    cartService.saveCart(cart);
 
-	    // Thông báo đăng ký thành công
-	    model.addAttribute("error", "Đã đăng ký thành công, hãy đăng nhập!");
-	    
+	    model.addAttribute("error", "Đăng ký thành công, hãy đăng nhập!");
 	    return "login";
 	}
-
 
 	
 	@GetMapping("/user/change-pass-form")
